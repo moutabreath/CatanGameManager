@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.1.5" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CatanGame.Interfaces\CatanGameManager.Interfaces.csproj" />
+    <ProjectReference Include="..\CatanGameManager.Core\CatanGameManager.Core.csproj" />
+    <ProjectReference Include="..\CatanGamePersistenceMongoDB\CatanGamePersistence.MongoDB.csproj" />
+    <ProjectReference Include="..\CommonObjects\CatanGameManager.CommonObjects.csproj" />
+  </ItemGroup>
+
+</Project>
