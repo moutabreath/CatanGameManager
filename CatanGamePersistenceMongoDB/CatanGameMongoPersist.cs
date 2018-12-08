@@ -27,9 +27,10 @@ namespace CatanGamePersistence.MongoDB
             Client = new MongoClient(configuration.MongoConnectionString);
             Database = Client.GetDatabase(configuration.MongoCatanGameDbName);
             InitializeClassMap();
+            MongoCollection = Database.GetCollection<CatanGame> (_catanGameDoc);
         }
 
-        private void InitializeClassMap()
+        private static void InitializeClassMap()
         {
             if (BsonClassMap.IsClassMapRegistered(typeof(CatanGame)) == false)
             {
@@ -58,27 +59,22 @@ namespace CatanGamePersistence.MongoDB
             _logger?.LogInformation($"UpdatePlayerInGame, game: {catanGame.Id}, player: {playerToUpdate.Id}");
             bool doesPlayerExist = catanGame.ActivePlayers.Select(activePlayer => activePlayer.NickName == playerToUpdate.NickName).
                 FirstOrDefault();
-            if (doesPlayerExist)
+            if (!doesPlayerExist)
             {
-                FilterDefinition<CatanGame> filter = 
-                    Builders<CatanGame>.Filter.Where(x => x.Id == catanGame.Id 
+                _logger?.LogError($"UpdatePlayerInGame. Player is not added into the game. game: {catanGame.Id}, player: {playerToUpdate.Id}");
+                return;
+            }
+            FilterDefinition<CatanGame> filter =  Builders<CatanGame>.Filter.Where(x => x.Id == catanGame.Id 
                                                           && x.ActivePlayers.Any(activePlayer => activePlayer.NickName == playerToUpdate.NickName));
+            UpdateDefinition<CatanGame> update = Builders<CatanGame>.Update.Set(x => x.ActivePlayers[-1], playerToUpdate);
+            IMongoCollection<CatanGame> gameCollection = Database.GetCollection<CatanGame>(_catanGameDoc);
+            await gameCollection.UpdateOneAsync(filter, update);
 
-                UpdateDefinition<CatanGame> update = Builders<CatanGame>.Update.Set(x => x.ActivePlayers[-1].NumOfActiveKnights, 0);
-                IMongoCollection<CatanGame> gameCollection = Database.GetCollection<CatanGame>(_catanGameDoc);
-                await gameCollection.UpdateOneAsync(filter, update);
-            }
-            else
-            {
-                catanGame.ActivePlayers.Add(playerToUpdate);
-                await UpdateGame(catanGame);
-            }
-            
         }
 
         public async Task<CatanGame> GetGame(Guid gameId)
         {
-            _logger?.LogInformation($"GetGame:  {gameId}");
+            _logger?.LogInformation($"GetGame: {gameId}");
             IMongoQueryable<CatanGame> collection = Database.GetCollection<CatanGame>(_catanGameDoc).AsQueryable();
             CatanGame catanGame = await collection.FirstAsync(game => game.Id == gameId);
             return catanGame;
@@ -88,13 +84,13 @@ namespace CatanGamePersistence.MongoDB
         {
             _logger?.LogInformation($"GetPlayerActiveGames for player: {playedId}");
             IMongoCollection<CatanGame> collection = Database.GetCollection<CatanGame>(_catanGameDoc);
-            IMongoQueryable<CatanGame> collectionqAsQueryable = Database.GetCollection<CatanGame>(_catanGameDoc).AsQueryable();
             IAsyncCursor<CatanGame> playerGames = await collection.FindAsync(game => game.ActivePlayers.Any(activePlayer => activePlayer.Id ==playedId));
             return playerGames.ToList();
         }
 
         public async Task UpdateGame(CatanGame catanGame)
         {
+            if (catanGame.Id == Guid.Empty) catanGame.Id = Guid.NewGuid();
             _logger?.LogInformation($"UpdateGame game: {catanGame.Id}");
             IMongoCollection<CatanGame> gameCollection = Database.GetCollection<CatanGame>(_catanGameDoc);
             FilterDefinition<CatanGame> filter = Builders<CatanGame>.Filter.Where(x => x.Id == catanGame.Id);

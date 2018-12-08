@@ -25,9 +25,15 @@ namespace CatanGameManager.API.Controllers
             _catanUserBusinessLogic = catanUserBusinessLogic;
         }
       
-        public async Task RegisterUser(PlayerProfile playerProfile)
+        public async Task<bool> RegisterUser(PlayerProfile playerProfile)
         {
             _logger?.LogInformation($"RegisterUser for user:  \"{playerProfile.Id}\"");
+            return await _catanUserBusinessLogic.RegisterPlayer(playerProfile);
+        }
+
+        public async Task UpdatePlayer(PlayerProfile playerProfile)
+        {
+            _logger?.LogInformation($"UpdatePlayer for user:  \"{playerProfile.Id}\"");
             await _catanUserBusinessLogic.UpdatePlayer(playerProfile);
         }
 

@@ -8,9 +8,11 @@ namespace CatanGameManager.Interfaces
 {
     public interface ICatanUserBusinessLogic
     {
+        Task<bool> RegisterPlayer(PlayerProfile playerProfile);
         Task UpdatePlayer(PlayerProfile playerProfile);
         Task<PlayerProfile> GetPlayer(string userName, string password);
         Task UnRegisterUser(Guid userId);
         Task<List<PlayerProfile>> SearchPlayer(string userName);
+        
     }
 }

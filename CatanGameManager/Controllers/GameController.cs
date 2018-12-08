@@ -15,37 +15,37 @@ namespace CatanGameManager.API.Controllers
     public class GameController : Controller
     {
 
-        private readonly ICatanGameBusinessLogic _catanGameBuisnessLogic;
+        private readonly ICatanGameBusinessLogic _catanGameBusinessLogic;
 
         public GameController(ILogger<GameController> logger, ICatanGameBusinessLogic catanGameBusinessLogic)
         {
-            _catanGameBuisnessLogic = catanGameBusinessLogic;
+            _catanGameBusinessLogic = catanGameBusinessLogic;
         }
 
         #region Game Update
         public async Task UpdateGame(CatanGame catanGame)
         {
-            await _catanGameBuisnessLogic.UpdateGame(catanGame);
+            await _catanGameBusinessLogic.UpdateGame(catanGame);
         }
 
         public async Task<CatanGame> GetGame(Guid gameId)
         {
-            return await _catanGameBuisnessLogic.GetGame(gameId);
+            return await _catanGameBusinessLogic.GetGame(gameId);
         }
 
         public async Task RemoveGame(Guid id)
         {
-            await _catanGameBuisnessLogic.RemoveGame(id);
+            await _catanGameBusinessLogic.RemoveGame(id);
         }
 
         public async Task<IEnumerable<CatanGame>> GetPlayerActiveGames(Guid playedId)
         {
-            return await _catanGameBuisnessLogic.GetPlayerActiveGames(playedId);
+            return await _catanGameBusinessLogic.GetPlayerActiveGames(playedId);
         }
 
         public async Task AddPlayerToGame(CatanGame catanGame, ActivePlayer playerProfile)
         {
-            await _catanGameBuisnessLogic.AddPlayerToGame(catanGame, playerProfile);
+            await _catanGameBusinessLogic.AddPlayerToGame(catanGame, playerProfile);
         }
 
         #endregion Game Update
@@ -53,38 +53,38 @@ namespace CatanGameManager.API.Controllers
         #region game and player knights
         public async Task AddPlayerVictoryPoint(Guid gameId, Guid activePlayerId, VPType updateType)
         {
-            await _catanGameBuisnessLogic.AddPlayerVictoryPoint(gameId, activePlayerId, updateType);
+            await _catanGameBusinessLogic.AddPlayerVictoryPoint(gameId, activePlayerId, updateType);
         }
 
         public async Task AddPlayerKnight(Guid gameId, Guid activePlayerId, KnightRank knightRank)
         {
-            await _catanGameBuisnessLogic.AddPlayerKnight(gameId, activePlayerId, knightRank);
+            await _catanGameBusinessLogic.AddPlayerKnight(gameId, activePlayerId, knightRank);
         }
 
         public async Task AdvanceBarbarians(Guid gameId)
         {
-            await _catanGameBuisnessLogic.AdvanceBarbarians(gameId);
+            await _catanGameBusinessLogic.AdvanceBarbarians(gameId);
         }       
 
         public async Task ActiveAllKnightsForPlayer(Guid gameId, Guid playerId)
         {
-            await _catanGameBuisnessLogic.ActivateAllKnightsForPlayer(gameId, playerId);
+            await _catanGameBusinessLogic.ActivateAllKnightsForPlayer(gameId, playerId);
         }
 
         public async Task DeactivateAllKnights(Guid gameId)
         {
-            await _catanGameBuisnessLogic.DeactivateAllKnights(gameId);
+            await _catanGameBusinessLogic.DeactivateAllKnights(gameId);
         }
 
         public async Task<int> GetTotalActiveKnights(Guid gameId)
         {
-            return await _catanGameBuisnessLogic.GetTotalActiveKnights(gameId);
+            return await _catanGameBusinessLogic.GetTotalActiveKnights(gameId);
         }
         #endregion game and player knights
 
         public async Task<int> GetPlayerTotalVps(ActivePlayer activePlayer)
         {
-            return  await _catanGameBuisnessLogic.GetPlayerTotalVps(activePlayer);
+            return  await _catanGameBusinessLogic.GetPlayerTotalVps(activePlayer);
         }
     }
 }

@@ -8,6 +8,7 @@ namespace CatanGamePersistence.MongoDB
     {
         protected MongoClient Client { get; set; }
         protected IMongoDatabase Database { get; set; }
+        protected IMongoCollection<T> MongoCollection { get; set; }
 
         protected async Task UpdateEntity(T entity, IMongoCollection<T> collection, FilterDefinition<T> filter)
         {

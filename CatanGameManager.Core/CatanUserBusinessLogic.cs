@@ -18,6 +18,14 @@ namespace CatanGameManager.Core
             _logger = logger;
             _catanGamePersist = catanGamePersist;
         }
+        public async Task<bool> RegisterPlayer(PlayerProfile playerProfile)
+        {
+            _logger?.LogInformation($"AddPlayer:  \"{playerProfile.NickName}\"");
+            var user = await GetPlayer(playerProfile.NickName, playerProfile.Password);
+            if (user != null) return false;
+            await _catanGamePersist.UpdateUser(playerProfile);
+            return true;
+        }
 
         public async Task<PlayerProfile> GetPlayer(string userName, string password)
         {
@@ -38,8 +46,10 @@ namespace CatanGameManager.Core
 
         public async Task UpdatePlayer(PlayerProfile playerProfile)
         {
-            _logger?.LogInformation($"GetPlayer:  \"{playerProfile.Id}\"");
+            _logger?.LogInformation($"UpdatePlayer:  \"{playerProfile.Id}\"");
             await _catanGamePersist.UpdateUser(playerProfile);
         }
+
+     
     }
 }

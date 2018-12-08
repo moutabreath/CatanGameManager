@@ -13,11 +13,8 @@ namespace CatanGamePersistence.MongoDB
     public class CatanUserMongoPersist: CatanEntityMongoPersist<PlayerProfile>, ICatanUserPersist
     {
         private readonly ILogger<CatanUserMongoPersist> _logger;
-        
-  
-
         private readonly string _playerProfileDoc = "PlayerProfile";
-
+        
 
         public CatanUserMongoPersist(ILogger<CatanUserMongoPersist> logger, IOptions<CatanManagerConfig> options)
         {
@@ -28,7 +25,7 @@ namespace CatanGamePersistence.MongoDB
             InitializeClassMap();
         }
 
-        private void InitializeClassMap()
+        private static void InitializeClassMap()
         {
             if (BsonClassMap.IsClassMapRegistered(typeof(PlayerProfile)) == false)
             {
@@ -43,10 +40,11 @@ namespace CatanGamePersistence.MongoDB
 
         public async Task UpdateUser(PlayerProfile playerProfile)
         {
-            _logger?.LogInformation($"UpdateUser:  \"{playerProfile.Id}\" ");           
-            IMongoCollection<PlayerProfile> appCollection = Database.GetCollection<PlayerProfile>(_playerProfileDoc);
-            FilterDefinition<PlayerProfile> filter = Builders<PlayerProfile>.Filter.Where(x => x.NickName == playerProfile.NickName);
-            await UpdateEntity(playerProfile, appCollection, filter);
+            if (playerProfile.Id == Guid.Empty) playerProfile.Id = Guid.NewGuid();
+            _logger?.LogInformation($"UpdateUser: \"{playerProfile.Id}\" "); 
+            await UpdateEntity(playerProfile, 
+                Database.GetCollection<PlayerProfile>(_playerProfileDoc), 
+                Builders<PlayerProfile>.Filter.Where(x => x.NickName == playerProfile.NickName));
         }
 
         public async Task<PlayerProfile> GetUser(string userName, string password)
@@ -60,7 +58,7 @@ namespace CatanGamePersistence.MongoDB
 
         public async Task UnRegisterUser(Guid userId)
         {
-            _logger?.LogInformation($"GetUser:  \"{userId}\" ");
+            _logger?.LogInformation($"UnRegisterUser:  \"{userId}\" ");
             IMongoCollection<PlayerProfile> playerCollection = Database.GetCollection<PlayerProfile>(_playerProfileDoc);
             await playerCollection.DeleteOneAsync(playerProfile => playerProfile.Id == userId);
         }
