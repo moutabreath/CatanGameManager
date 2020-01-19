@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using CatanGameManager.CommonObjects;
 using CatanGameManager.CommonObjects.User;
 
 namespace CatanGameManager.Interfaces.PersistanceInterfaces

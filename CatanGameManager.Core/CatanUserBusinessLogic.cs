@@ -1,5 +1,4 @@
-﻿using CatanGameManager.CommonObjects;
-using CatanGameManager.Interfaces;
+﻿using CatanGameManager.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;

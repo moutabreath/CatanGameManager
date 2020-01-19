@@ -5,6 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using CatanGameManager.Interfaces.PersistanceInterfaces;
+using CatanGameManager.CommonObjects.User;
+using CatanGameManager.CommonObjects.Enums;
+using System.Linq;
 
 namespace CatanGameManager.Core
 {
@@ -18,6 +21,12 @@ namespace CatanGameManager.Core
             _logger = logger;
             _catanGamePersist = catanGamePersist;
         }
+		
+		  public async Task AddPlayerToGame(CatanGame catanGame, ActivePlayer playerProfile)
+        {
+            _logger?.LogInformation($"AddPlayerToGame for catanGame: {catanGame.Id}");
+            await _catanGamePersist.UpdatePlayerInGame(catanGame, playerProfile);
+        }
 
         public async Task ActivateAllKnightsForPlayer(Guid gameId, Guid playerId)
         {
@@ -29,12 +38,6 @@ namespace CatanGameManager.Core
         {
             _logger?.LogInformation($"AddPlayerKnight for catanGame: {gameId}, player: {activePlayerId}, knightRank: {knightRank.ToString()}");
             await _catanGamePersist.AddPlayerKnight(gameId, activePlayerId, knightRank);
-        }
-
-        public async Task AddPlayerToGame(CatanGame catanGame, ActivePlayer playerProfile)
-        {
-            _logger?.LogInformation($"AddPlayerToGame for catanGame: {catanGame.Id}");
-            await _catanGamePersist.UpdatePlayerInGame(catanGame, playerProfile);
         }
 
         public async Task AddPlayerToGame(CatanGame catanGame, PlayerProfile playerProfile)
@@ -76,7 +79,7 @@ namespace CatanGameManager.Core
 
         public async Task<CatanGame> GetGame(Guid gameId)
         {
-            _logger?.LogInformation($"GetGame for game: \"{gameId}\"");
+            _logger?.LogInformation($"GetGame for catanGame: \"{gameId}\"");
             return  await _catanGamePersist.GetGame(gameId);
         }
 
@@ -91,13 +94,7 @@ namespace CatanGameManager.Core
             _logger?.LogInformation($"GetPlayerActiveGames for game admin: {playedId}");
             return await _catanGamePersist.GetPlayerActiveGames(playedId);
         }
-
-        public async Task<int> GetPlayerTotalVps(ActivePlayer activePlayer)
-        {
-            _logger?.LogInformation($"GetPlayerTotalVps for game: {activePlayer.CatanGameId},  player: {activePlayer.Id}");
-            return await _catanGamePersist.GetPlayerTotalVps(activePlayer.CatanGameId, activePlayer.Id);
-        }
-
+      
         public async Task<int> GetTotalActiveKnights(Guid gameId)
         {
             _logger?.LogInformation($"GetTotalActiveKnights for catanGame: {gameId}");
@@ -115,5 +112,30 @@ namespace CatanGameManager.Core
             _logger?.LogInformation($"UpdateGame for game:  \"{catanGame.Id}\"");
             await _catanGamePersist.UpdateGame(catanGame);
         }
-    }
+		
+		 public async Task<int> GetPlayerTotalVps(ActivePlayer activePlayer)
+        {
+            CatanGame game = await GetGame(activePlayer.CatanGameId);
+            activePlayer = game.ActivePlayers.FirstOrDefault(activeP => activeP.Id == activePlayer.Id);
+
+            int interchangeabelCounter = 0;
+            foreach (VPType.InterChanageableVP interChanageableVp in activePlayer.InterChanageableVPs)
+            {
+                switch (interChanageableVp)
+                {
+                    case VPType.InterChanageableVP.Merchant:
+                        interchangeabelCounter++;
+                        break;
+                    case VPType.InterChanageableVP.LongestRoad:
+                    case VPType.InterChanageableVP.MetropolisCloth:
+                    case VPType.InterChanageableVP.MetropolisCoin:
+                    case VPType.InterChanageableVP.MetropolisPaper:
+                        interchangeabelCounter += 2;
+                        break;
+                }
+            }
+            return interchangeabelCounter + activePlayer.NumOfCities*2 + activePlayer.NumOfSettlements + activePlayer.SaviorOfCatanVP;
+        }
+
+    }    
 }

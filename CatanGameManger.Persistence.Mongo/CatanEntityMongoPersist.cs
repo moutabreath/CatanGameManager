@@ -12,7 +12,7 @@ namespace CatanGamePersistence.MongoDB
 
         protected async Task UpdateEntity(T entity, IMongoCollection<T> collection, FilterDefinition<T> filter)
         {
-            await collection.ReplaceOneAsync(filter, entity, new UpdateOptions { IsUpsert = true });
+            await collection.ReplaceOneAsync(filter, entity, new ReplaceOptions { IsUpsert = true });
         }
     }
 }

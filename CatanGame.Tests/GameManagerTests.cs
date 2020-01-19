@@ -8,9 +8,9 @@ using CatanGameManager.CommonObjects.User;
 using CatanGameManager.CommonObjects;
 using CatanGameManager.Core;
 using CatanGameManager.Interfaces;
-using CatanGamePersistence.MongoDB;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using CatanGamePersistence.MongoDB;
 
 namespace CatanGameManager.Tests
 {
@@ -130,9 +130,7 @@ namespace CatanGameManager.Tests
             CatanGame theCatanGame = playerGames.FirstOrDefault();
             Assert.IsNotNull(theCatanGame);
             Assert.IsTrue(theCatanGame.ActivePlayers.Select(x => x.Id).Contains(playerProfile.Id));
-        }
-
-        
+        }        
       
         [TestMethod]
         public async Task TestAddPlayerKnight()

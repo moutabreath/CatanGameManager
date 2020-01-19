@@ -1,19 +1,19 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2036
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29709.97
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CatanGameManager.API", "CatanGameManager\CatanGameManager.API.csproj", "{035E757C-E002-4816-8263-4D359FA5EFC1}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CatanGameManager.CommonObjects", "CommonObjects\CatanGameManager.CommonObjects.csproj", "{93932797-1F03-4B95-A619-BD63E1AD6325}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CatanGameManager.Interfaces", "CatanGame.Interfaces\CatanGameManager.Interfaces.csproj", "{43FC9566-09B9-4885-B048-F2852917DE80}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CatanGameManager.Core", "CatanGameManager.Core\CatanGameManager.Core.csproj", "{C0240911-917C-4555-8DF6-B83BDB0BB4B9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CatanGame.Tests", "CatanGame.Tests\CatanGame.Tests.csproj", "{6EACAC45-8E57-4825-8D45-8085C924ED78}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CatanGamePersistence.MongoDB", "CatanGamePersistenceMongoDB\CatanGamePersistence.MongoDB.csproj", "{CFC63DDE-B5C2-462E-852B-1C0ACC8B7FBB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CatanGameManager.API", "CatanGameManager.API\CatanGameManager.API.csproj", "{FB027715-7823-45A8-8FA1-1518CD9D53E9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CatanGameManager.Common", "CatanGameManager.Common\CatanGameManager.Common.csproj", "{A6AB37B4-CCA9-4664-B217-B4A0F0E89AE3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CatanGameManger.Persistence.Mongo", "CatanGameManger.Persistence.Mongo\CatanGameManger.Persistence.Mongo.csproj", "{F3AC5CC6-51CA-4575-99A6-ED8925079B63}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,14 +21,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{035E757C-E002-4816-8263-4D359FA5EFC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{035E757C-E002-4816-8263-4D359FA5EFC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{035E757C-E002-4816-8263-4D359FA5EFC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{035E757C-E002-4816-8263-4D359FA5EFC1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{93932797-1F03-4B95-A619-BD63E1AD6325}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{93932797-1F03-4B95-A619-BD63E1AD6325}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{93932797-1F03-4B95-A619-BD63E1AD6325}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{93932797-1F03-4B95-A619-BD63E1AD6325}.Release|Any CPU.Build.0 = Release|Any CPU
 		{43FC9566-09B9-4885-B048-F2852917DE80}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{43FC9566-09B9-4885-B048-F2852917DE80}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{43FC9566-09B9-4885-B048-F2852917DE80}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -41,10 +33,18 @@ Global
 		{6EACAC45-8E57-4825-8D45-8085C924ED78}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6EACAC45-8E57-4825-8D45-8085C924ED78}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6EACAC45-8E57-4825-8D45-8085C924ED78}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CFC63DDE-B5C2-462E-852B-1C0ACC8B7FBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CFC63DDE-B5C2-462E-852B-1C0ACC8B7FBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CFC63DDE-B5C2-462E-852B-1C0ACC8B7FBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CFC63DDE-B5C2-462E-852B-1C0ACC8B7FBB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB027715-7823-45A8-8FA1-1518CD9D53E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB027715-7823-45A8-8FA1-1518CD9D53E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB027715-7823-45A8-8FA1-1518CD9D53E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB027715-7823-45A8-8FA1-1518CD9D53E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A6AB37B4-CCA9-4664-B217-B4A0F0E89AE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A6AB37B4-CCA9-4664-B217-B4A0F0E89AE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A6AB37B4-CCA9-4664-B217-B4A0F0E89AE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A6AB37B4-CCA9-4664-B217-B4A0F0E89AE3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3AC5CC6-51CA-4575-99A6-ED8925079B63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3AC5CC6-51CA-4575-99A6-ED8925079B63}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3AC5CC6-51CA-4575-99A6-ED8925079B63}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3AC5CC6-51CA-4575-99A6-ED8925079B63}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
