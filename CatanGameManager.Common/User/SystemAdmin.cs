@@ -1,6 +1,6 @@
 ﻿namespace CatanGameManager.CommonObjects.User
 {
-    public class CatanGameManagerSystemAdmin :Entity
+    public class CatanGameManagerSystemAdmin : User
     {
     }
 }

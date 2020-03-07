@@ -4,6 +4,6 @@ namespace CatanGameManager.CommonObjects
 {
     public class Entity
     {
-        public Guid Id { get; set; }
+        public Guid Id { get; set; }                
     }
 }

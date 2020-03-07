@@ -10,20 +10,19 @@ namespace CatanGameManager.Interfaces.PersistanceInterfaces
     public interface ICatanGamePersist
     {
         Task UpdateGame(CatanGame catanGame);
-
         Task<CatanGame> GetGame(Guid gameId);
-
-        Task<IEnumerable<CatanGame>> GetPlayerActiveGames(Guid playedId);
-
+        Task RemoveGame(CatanGame catanGame);
+        Task<IEnumerable<CatanGame>> GetUserActiveGames(Guid playerId);
+        
         Task UpdatePlayerInGame(CatanGame catanGame, ActivePlayer playerToUpdate);
 
-        Task DeactivateAllKnights(Guid catanGameId);
-
-        Task ActivateAllKnightsForPlayer(Guid catanGameId, Guid activePlayerId);
-        Task AdvanceBarbarians(Guid gameId);
         Task AddPlayerVictoryPoint(Guid gameId, Guid activePlayerId, VPType updateType);
+
+        Task<int> GetGameTotalActiveKnights(Guid gameId);
         Task AddPlayerKnight(Guid gameId, Guid activePlayerId, KnightRank knightRank);
-        Task RemoveGame(Guid id);
-        Task<int> GetTotalActiveKnights(Guid gameId);
+        Task AdvanceBarbarians(Guid gameId);
+        Task ActivateAllKnightsForPlayer(Guid gameId, Guid playerId);
+        Task DeactivateAllKnights(Guid gameId);
+        
     }
 }

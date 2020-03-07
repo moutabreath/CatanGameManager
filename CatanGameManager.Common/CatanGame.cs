@@ -8,9 +8,7 @@ namespace CatanGameManager.CommonObjects
     {
         public int BanditsDistance { get; set; }
         public List<ActivePlayer> ActivePlayers { get; set; }
-
         public List <Tuple<int, int>> RecentDiceRolls { get; set; }
-        public int NumberOfTotalKnights = 0;
         public int BanditsStrength = 0;
     }
 }

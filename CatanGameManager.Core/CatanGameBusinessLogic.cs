@@ -21,121 +21,133 @@ namespace CatanGameManager.Core
             _logger = logger;
             _catanGamePersist = catanGamePersist;
         }
-		
-		  public async Task AddPlayerToGame(CatanGame catanGame, ActivePlayer playerProfile)
+
+        #region Game Update
+
+        public async Task UpdateGame(CatanGame catanGame)
         {
-            _logger?.LogInformation($"AddPlayerToGame for catanGame: {catanGame.Id}");
-            await _catanGamePersist.UpdatePlayerInGame(catanGame, playerProfile);
-        }
-
-        public async Task ActivateAllKnightsForPlayer(Guid gameId, Guid playerId)
-        {
-            _logger?.LogInformation($"ActivateAllKnightsForPlayer for catanGame: {gameId}, player: {playerId}");
-            await _catanGamePersist.ActivateAllKnightsForPlayer(gameId, playerId);
-        }
-
-        public async Task AddPlayerKnight(Guid gameId, Guid activePlayerId, KnightRank knightRank)
-        {
-            _logger?.LogInformation($"AddPlayerKnight for catanGame: {gameId}, player: {activePlayerId}, knightRank: {knightRank.ToString()}");
-            await _catanGamePersist.AddPlayerKnight(gameId, activePlayerId, knightRank);
-        }
-
-        public async Task AddPlayerToGame(CatanGame catanGame, PlayerProfile playerProfile)
-        {
-            _logger?.LogInformation($"AddPlayerToGame for catanGame: {catanGame.Id}, player: {playerProfile.Id}");
-
-            ActivePlayer activePlayer = new ActivePlayer();
-            activePlayer.Id = Guid.NewGuid();
-            activePlayer.PlayerProfileId = playerProfile.Id;
-            activePlayer.InterChanageableVPs = new List<VPType.InterChanageableVP>();
-            activePlayer.NumOfActiveKnights = 0;
-            activePlayer.NumOfCities = 0;
-            activePlayer.NumOfActiveKnights = 0;
-            activePlayer.NumOfContinousRoads = 0;
-            activePlayer.NumOfSettlements = 0;
-            activePlayer.NumOfTotalKnights = 0;
-
-            catanGame.ActivePlayers.Add(activePlayer);
+            _logger?.LogInformation($"UpdateGame for game: {catanGame.Id}");
             await _catanGamePersist.UpdateGame(catanGame);
-        }
-
-        public async Task AddPlayerVictoryPoint(Guid gameId, Guid activePlayerId, VPType updateType)
-        {
-            _logger?.LogInformation($"AddPlayerVictoryPoint for catanGame: {gameId}, player: {activePlayerId}, updateType: {updateType.ToString()}");
-            await _catanGamePersist.AddPlayerVictoryPoint(gameId, activePlayerId, updateType);
-        }
-
-        public async Task AdvanceBarbarians(Guid gameId)
-        {
-            _logger?.LogInformation($"AdvanceBarbarians for catanGame: {gameId}");
-            await _catanGamePersist.AdvanceBarbarians(gameId);
-        }
-
-        public async Task DeactivateAllKnights(Guid gameId)
-        {
-            _logger?.LogInformation($"DeactivateAllKnights for catanGame: {gameId}");
-            await _catanGamePersist.DeactivateAllKnights(gameId);
         }
 
         public async Task<CatanGame> GetGame(Guid gameId)
         {
-            _logger?.LogInformation($"GetGame for catanGame: \"{gameId}\"");
-            return  await _catanGamePersist.GetGame(gameId);
+            _logger?.LogInformation($"GetGame for catanGame: {gameId}");
+            return await _catanGamePersist.GetGame(gameId);
         }
 
-        public async Task<int> GetGameTotalActiveKnights(Guid gameId)
+        public async Task<IEnumerable<CatanGame>> GetUserActiveGames(Guid activePlayerId)
         {
-            _logger?.LogInformation($"GetGameTotalActiveKnights for catanGame: {gameId}");
-            return await _catanGamePersist.GetTotalActiveKnights(gameId);
+            _logger?.LogInformation($"GetUserActiveGames for game admin: {activePlayerId}");
+            return await _catanGamePersist.GetUserActiveGames(activePlayerId);
         }
 
-        public async Task<IEnumerable<CatanGame>> GetPlayerActiveGames(Guid playedId)
+        public async Task AddPlayerToGame(CatanGame catanGame, User user)
         {
-            _logger?.LogInformation($"GetPlayerActiveGames for game admin: {playedId}");
-            return await _catanGamePersist.GetPlayerActiveGames(playedId);
-        }
-      
-        public async Task<int> GetTotalActiveKnights(Guid gameId)
-        {
-            _logger?.LogInformation($"GetTotalActiveKnights for catanGame: {gameId}");
-            return await _catanGamePersist.GetTotalActiveKnights(gameId);
-        }
+            _logger?.LogInformation($"AddPlayerToGame for catanGame: {catanGame.Id}, player: {user.Id}: {user.Name}");
 
-        public async Task RemoveGame(Guid gameId)
-        {
-            _logger?.LogInformation($"AdvanceBarbarians for catanGame: {gameId}");
-            await _catanGamePersist.RemoveGame(gameId);
-        }
+            ActivePlayer activePlayer = new ActivePlayer
+            {
+                Id = Guid.NewGuid(),
+                UserId = user.Id,
+                InterChanageableVPs = new List<VPType.InterChanageableVP>(),
+                NumOfActiveKnights = 0,
+                NumOfCities = 0
+            };
+            activePlayer.NumOfActiveKnights = 0;
+            activePlayer.NumOfContinousRoads = 0;
+            activePlayer.NumOfSettlements = 0;
+            activePlayer.NumOfTotalKnights = 0;
+            activePlayer.Name = user.Name;
 
-        public async Task UpdateGame(CatanGame catanGame)
-        {
-            _logger?.LogInformation($"UpdateGame for game:  \"{catanGame.Id}\"");
+            catanGame.ActivePlayers.Add(activePlayer);
             await _catanGamePersist.UpdateGame(catanGame);
         }
-		
-		 public async Task<int> GetPlayerTotalVps(ActivePlayer activePlayer)
+        public async Task UpdatePlayerInGame(CatanGame catanGame, ActivePlayer playerToUpdate)
         {
-            CatanGame game = await GetGame(activePlayer.CatanGameId);
-            activePlayer = game.ActivePlayers.FirstOrDefault(activeP => activeP.Id == activePlayer.Id);
-
-            int interchangeabelCounter = 0;
-            foreach (VPType.InterChanageableVP interChanageableVp in activePlayer.InterChanageableVPs)
-            {
-                switch (interChanageableVp)
-                {
-                    case VPType.InterChanageableVP.Merchant:
-                        interchangeabelCounter++;
-                        break;
-                    case VPType.InterChanageableVP.LongestRoad:
-                    case VPType.InterChanageableVP.MetropolisCloth:
-                    case VPType.InterChanageableVP.MetropolisCoin:
-                    case VPType.InterChanageableVP.MetropolisPaper:
-                        interchangeabelCounter += 2;
-                        break;
-                }
-            }
-            return interchangeabelCounter + activePlayer.NumOfCities*2 + activePlayer.NumOfSettlements + activePlayer.SaviorOfCatanVP;
+            _logger?.LogInformation($"UpdatePlayerInGame for catanGame: {catanGame.Id}, player to update: {playerToUpdate.Id}");
+            await _catanGamePersist.UpdatePlayerInGame(catanGame, playerToUpdate);
         }
 
-    }    
+        public async Task RemoveGame(CatanGame catanGame)
+        {
+            _logger?.LogInformation($"RemoveGame for catanGame: {catanGame.Id}");
+            await _catanGamePersist.RemoveGame(catanGame);
+        }
+
+        #endregion Game Update
+
+        #region victory points
+
+        /// <summary>
+        /// This serves a utility to avoid repeating this calculation on the client.
+        /// </summary>
+        /// <param name="activePlayer"></param>
+        /// <returns></returns>
+        public async Task<int> GetPlayerTotalVps(ActivePlayer activePlayer)
+        {
+            int interchangeabelCounter = 0;
+            await Task.Run(() =>
+            {
+                foreach (VPType.InterChanageableVP interChanageableVp in activePlayer.InterChanageableVPs)
+                {
+                    switch (interChanageableVp)
+                    {
+                        case VPType.InterChanageableVP.Merchant:
+                            interchangeabelCounter++;
+                            break;
+                        case VPType.InterChanageableVP.LongestRoad:
+                        case VPType.InterChanageableVP.MetropolisCloth:
+                        case VPType.InterChanageableVP.MetropolisCoin:
+                        case VPType.InterChanageableVP.MetropolisPaper:
+                            interchangeabelCounter += 2;
+                            break;
+                    }
+                }
+            });
+            return interchangeabelCounter + activePlayer.NumOfCities * 2 + activePlayer.NumOfSettlements + activePlayer.SaviorOfCatanVP;
+        }
+
+        public async Task AddPlayerVictoryPoint(Guid catanGameId, Guid activePlayerId, VPType updateType)
+        {
+            _logger?.LogInformation($"AddPlayerVictoryPoint for catanGame: {activePlayerId}, player: {activePlayerId}, updateType: {updateType.ToString()}");
+            await _catanGamePersist.AddPlayerVictoryPoint(catanGameId, activePlayerId, updateType);
+        }
+
+        #endregion victory points
+
+        #region game and player knights
+
+        public async Task<int> GetGameTotalActiveKnights(Guid catanGameId)
+        {
+            _logger?.LogInformation($"GetTotalActiveKnights for catanGame: {catanGameId}");
+            return await _catanGamePersist.GetGameTotalActiveKnights(catanGameId);
+        }
+
+        public async Task AddPlayerKnight(Guid catanGameId, Guid activePlayerId, KnightRank knightRank)
+        {
+            _logger?.LogInformation($"AddPlayerKnight for catanGame: {catanGameId}, player: {activePlayerId}, knightRank: {knightRank.ToString()}");
+            await _catanGamePersist.AddPlayerKnight(catanGameId, activePlayerId, knightRank);
+        }
+        
+        public async Task AdvanceBarbarians(Guid catanGameId)
+        {
+            _logger?.LogInformation($"AdvanceBarbarians for catanGame: {catanGameId}");
+            await _catanGamePersist.AdvanceBarbarians(catanGameId);
+        }
+
+        public async Task ActivateAllKnightsForPlayer(Guid catanGameId, Guid activePlayerId)
+        {
+            _logger?.LogInformation($"ActivateAllKnightsForPlayer for catanGame: {catanGameId}, player: {activePlayerId}");
+            await _catanGamePersist.ActivateAllKnightsForPlayer(catanGameId, activePlayerId);
+        }
+
+        public async Task DeactivateAllKnights(Guid catanGameId)
+        {
+            _logger?.LogInformation($"DeactivateAllKnights for catanGame: {catanGameId}");
+            await _catanGamePersist.DeactivateAllKnights(catanGameId);
+        }
+
+        #endregion  game and player knights
+    }
 }
