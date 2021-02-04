@@ -52,13 +52,12 @@ namespace CatanGameManager.Core
                 UserId = user.Id,
                 InterChanageableVPs = new List<VPType.InterChanageableVP>(),
                 NumOfActiveKnights = 0,
-                NumOfCities = 0
+                NumOfCities = 0,
+                NumOfContinousRoads = 0,
+                NumOfSettlements = 0,
+                NumOfTotalKnights = 0,
+                Name = user.Name
             };
-            activePlayer.NumOfActiveKnights = 0;
-            activePlayer.NumOfContinousRoads = 0;
-            activePlayer.NumOfSettlements = 0;
-            activePlayer.NumOfTotalKnights = 0;
-            activePlayer.Name = user.Name;
 
             catanGame.ActivePlayers.Add(activePlayer);
             await _catanGamePersist.UpdateGame(catanGame);
@@ -126,7 +125,7 @@ namespace CatanGameManager.Core
 
         public async Task AddPlayerKnight(Guid catanGameId, Guid activePlayerId, KnightRank knightRank)
         {
-            _logger?.LogInformation($"AddPlayerKnight for catanGame: {catanGameId}, player: {activePlayerId}, knightRank: {knightRank.ToString()}");
+            _logger?.LogInformation($"AddPlayerKnight for catanGame: {catanGameId}, player: {activePlayerId}, knightRank: {knightRank}");
             await _catanGamePersist.AddPlayerKnight(catanGameId, activePlayerId, knightRank);
         }
         

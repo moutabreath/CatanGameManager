@@ -31,10 +31,8 @@ namespace CatanGameManager.Tests
         {
             CatanManagerConfig config = new CatanManagerConfig
             {
-                MongoConnectionString = "mongodb://myUserAdmin:fuckumongo2@localhost/catanHelperTest?authSource=admin",
-                //MongoConnectionString = "mongodb://catanian:shaveandhaircut5@ds141813.mlab.com:41813/catan-helper-test",
-                //MongoConnectionString = "mongodb://catan-almighty:shaveandhaircut@cluster0-shard-00-00-umq60.mongodb.net:27017,cluster0-shard-00-01-umq60.mongodb.net:27017,cluster0-shard-00-02-umq60.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true",
-                MongoCatanGameDbName = "CatanGameTest",
+                MongoConnectionString = "mongodb://myAdmin:simplePassword@localhost/catanHelperTest?authSource=admin",
+                MongoCatanGameDbName = "CatanGameTest"
             };
             IOptions<CatanManagerConfig> someOptions = Options.Create(config);
             _catanPlayerBusinessLogic = new CatanUserBusinessLogic(null, new CatanUserMongoPersist(null, someOptions));
@@ -71,8 +69,7 @@ namespace CatanGameManager.Tests
             {
                 ActivePlayers = players,
                 BanditsDistance = 7,
-                BanditsStrength = 4,
-                NumberOfTotalKnights = 0
+                BanditsStrength = 4
 
             };
             await _catanGameBusinessLogic.UpdateGame(catanGame);
@@ -98,7 +95,7 @@ namespace CatanGameManager.Tests
             IEnumerable<CatanGame> playerGames = await _catanGameBusinessLogic.GetUserActiveGames(playerProfile.Id);
             foreach (CatanGame playerGame in playerGames)
             {
-                await _catanGameBusinessLogic.RemoveGame(playerGame.Id);
+                await _catanGameBusinessLogic.RemoveGame(playerGame);
             }
 
             await _catanPlayerBusinessLogic.UnRegisterUser(playerProfile.Id);
@@ -149,7 +146,7 @@ namespace CatanGameManager.Tests
         {
             CatanGame theCatanGame = await GetGame();
             ActivePlayer activePlayer = theCatanGame.ActivePlayers.FirstOrDefault();
-
+            await TestAddPlayerKnight();
             await _catanGameBusinessLogic.ActivateAllKnightsForPlayer(theCatanGame.Id, activePlayer.Id);
 
             theCatanGame = await GetGame();

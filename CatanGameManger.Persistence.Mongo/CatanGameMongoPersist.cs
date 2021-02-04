@@ -178,25 +178,13 @@ namespace CatanGamePersistence.MongoDB
         public async Task DeactivateAllKnights(Guid catanGameId)
         {
             _logger?.LogInformation($"DeactivateAllKnights game: {catanGameId}");
-
-            //        var filter = Builders<CatanGame>.Filter
-            //.Where(x => x.Id == catanGameId // Select the parent document first by its ID
-            //&& x.ActivePlayers.Any(y => y != null));  // Now filter the matching items in the nested array to be updated ONLY
-
-            //        var update = Builders<CatanGame>.Update
-            //            .Set(x => x.ActivePlayers[-1].NumOfActiveKnights, 0); // The "-1" index matches ALL the items matching the filter
-
-            //        await gameCollection.UpdateOneAsync(filter, update);
             IMongoCollection<CatanGame> gameCollection = Database.GetCollection<CatanGame>(_documentName);
-            await UpdateKnightsStatus(catanGameId, gameCollection, activePlayer => activePlayer != null, 0);
-        }
+            FilterDefinition<CatanGame> filter = Builders<CatanGame>.Filter
+    .Where(x => x.Id == catanGameId // Select the parent document first by its ID
+    && x.ActivePlayers.Any(y => y != null));  // Now filter the matching items in the nested array to be updated ONLY
 
-        private async Task UpdateKnightsStatus(Guid catanGameId, IMongoCollection<CatanGame> gameCollection, Func<ActivePlayer, bool> predicate, int newValue)
-        {            
-            _logger?.LogInformation($"UpdateKnightsStatus: {catanGameId}");
-            
-            FilterDefinition<CatanGame> filter = Builders<CatanGame>.Filter.Where(catanGame => catanGame.Id == catanGameId && catanGame.ActivePlayers.Any(predicate));            
-            UpdateDefinition<CatanGame> update = Builders<CatanGame>.Update.Set(catanGame => catanGame.ActivePlayers[-1].NumOfActiveKnights, newValue);
+            var update = Builders<CatanGame>.Update
+                .Set(x => x.ActivePlayers[-1].NumOfActiveKnights, 0); // The "-1" index matches ALL the items matching the filter
 
             await gameCollection.UpdateOneAsync(filter, update);
         }
@@ -209,7 +197,13 @@ namespace CatanGamePersistence.MongoDB
             ActivePlayer activePlayerToUpdate = gameCollection.AsQueryable().Where(game => game.Id == catanGameId).FirstOrDefault().
                ActivePlayers.Where(activePlayer => activePlayer.Id == playerId).FirstOrDefault();
 
-            await UpdateKnightsStatus(catanGameId, gameCollection, activePlayer => activePlayer.Id == activePlayer.Id, activePlayerToUpdate.NumOfTotalKnights);
+            FilterDefinition<CatanGame> filter = Builders<CatanGame>.Filter
+    .Where(x => x.Id == catanGameId // Select the parent document first by its ID
+    && x.ActivePlayers.Any(y => y != null));  // Now filter the matching items in the nested array to be updated ONLY
+
+            var update = Builders<CatanGame>.Update
+                .Set(x => x.ActivePlayers[-1].NumOfActiveKnights, activePlayerToUpdate.NumOfTotalKnights); // The "-1" index matches ALL the items matching the filter
+            await gameCollection.UpdateOneAsync(filter, update);
         }
 
         public async Task AdvanceBarbarians(Guid catanGameId)
@@ -245,7 +239,7 @@ namespace CatanGamePersistence.MongoDB
             FilterDefinition<CatanGame> filter = Builders<CatanGame>.Filter.Where(game => game.Id == catanGameId 
                                                                   && game.ActivePlayers.Any(activePlayer => activePlayer.Id == activePlayerId));
 
-            UpdateDefinition<CatanGame> update = Builders<CatanGame>.Update.Set(x => x.ActivePlayers[-1].NumOfTotalKnights, knightsNumberToAdd);
+            UpdateDefinition<CatanGame> update = Builders<CatanGame>.Update.Inc(x => x.ActivePlayers[-1].NumOfTotalKnights, knightsNumberToAdd);
 
             await gameCollection.UpdateOneAsync(filter, update);
         }
