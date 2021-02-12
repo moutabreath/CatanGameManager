@@ -32,12 +32,12 @@ namespace CatanGameManager.CommonObjects.Enums
 
         public enum InterChanageableVP
         {
+            None,
             LongestRoad,
             MetropolisCloth,
             MetropolisCoin,
             MetropolisPaper,
-            Merchant,
-            None
+            Merchant            
         }
 
         public UpdateType TypeToUpdate { get; private set; }

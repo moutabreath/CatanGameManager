@@ -70,7 +70,13 @@ namespace CatanGamePersistence.MongoDB
 
         public async Task UpdateGame(CatanGame catanGame)
         {
-            if (catanGame.Id == Guid.Empty) catanGame.Id = Guid.NewGuid();
+            if (catanGame.Id == Guid.Empty)
+            {
+                catanGame.Id = Guid.NewGuid();
+                catanGame.BanditsDistance = 7;
+                catanGame.BanditsStrength = 0;
+                catanGame.RecentDiceRolls = new List<Tuple<int, int>>();
+            }
             _logger?.LogInformation($"UpdateGame game: {catanGame.Id}");
             IMongoCollection<CatanGame> gameCollection = Database.GetCollection<CatanGame>(_documentName);
             FilterDefinition<CatanGame> filter = Builders<CatanGame>.Filter.Where(game => game.Id == catanGame.Id);
@@ -122,9 +128,11 @@ namespace CatanGamePersistence.MongoDB
             _logger?.LogInformation($"AdvanceBarbarians, game: {catanGameId}");
             IMongoCollection<CatanGame> gameCollection = Database.GetCollection<CatanGame>(_documentName);
             IAsyncCursor<CatanGame> catanGameCursor = await gameCollection.FindAsync(game => game.Id == catanGameId);
-
-            FilterDefinition<CatanGame> filter = Builders<CatanGame>.Filter.Where(x => x.Id == catanGameId);            
-            UpdateDefinition<CatanGame> update = Builders<CatanGame>.Update.Set(catanGame => catanGame.BanditsDistance, catanGameCursor.FirstOrDefault().BanditsDistance-- %7);
+            CatanGame game = catanGameCursor.FirstOrDefault();
+            game.BanditsDistance--;
+            game.BanditsDistance %= 7;
+            FilterDefinition<CatanGame> filter = Builders<CatanGame>.Filter.Where(catanGame => catanGame.Id == catanGameId);            
+            UpdateDefinition<CatanGame> update = Builders<CatanGame>.Update.Set(catanGame => catanGame.BanditsDistance, game.BanditsDistance);
 
             gameCollection.UpdateOne(filter, update); 
         }     
