@@ -173,7 +173,7 @@ namespace CatanGameManager.Tests
         }
 
         [TestMethod]
-        public async Task TestAdvanceBarbarians(Guid gameId)
+        public async Task TestAdvanceBarbarians()
         {
             CatanGame theGame = await GetGame();
             await _catanGameBusinessLogic.AdvanceBarbarians(theGame.Id);
@@ -189,7 +189,7 @@ namespace CatanGameManager.Tests
         }
 
         [TestMethod]
-        public async Task TestAddPlayerVictoryPoint(Guid gameId, Guid activePlayerId, VPType updateType)
+        public async Task TestAddPlayerVictoryPoint()
         {
             CatanGame theGame = await GetGame();
             int firstPlayerExpectedVPs = 0;
@@ -197,96 +197,108 @@ namespace CatanGameManager.Tests
 
             VPType vpType = new VPType(VPType.UpdateType.City);
             firstPlayerExpectedVPs += 2;
-            await _catanGameBusinessLogic.AddPlayerVictoryPoint(theGame.Id, theGame.ActivePlayers.FirstOrDefault().Id, vpType);
+            await _catanGameBusinessLogic.AddPlayerVictoryPoint(theGame, theGame.ActivePlayers.FirstOrDefault(), vpType);
             theGame = await GetGame();
             int numOfCities = theGame.ActivePlayers.FirstOrDefault().NumOfCities;
             Assert.AreEqual(1, numOfCities);
             Assert.AreEqual(0, theGame.ActivePlayers.FirstOrDefault().NumOfSettlements);
-            Assert.AreEqual(firstPlayerExpectedVPs, _catanGameBusinessLogic.GetPlayerTotalVps(theGame.ActivePlayers.FirstOrDefault()));
-            Assert.AreEqual(secondPlayerExpectedVPs, _catanGameBusinessLogic.GetPlayerTotalVps(theGame.ActivePlayers.ElementAt(1)));
+            Assert.AreEqual(firstPlayerExpectedVPs, theGame.ActivePlayers.FirstOrDefault());
+            Assert.AreEqual(secondPlayerExpectedVPs, theGame.ActivePlayers.ElementAt(1));
 
             vpType = new VPType(VPType.UpdateType.Settlment);
             firstPlayerExpectedVPs ++;
-            await _catanGameBusinessLogic.AddPlayerVictoryPoint(theGame.Id, theGame.ActivePlayers.FirstOrDefault().Id, vpType);
-            Assert.AreEqual(firstPlayerExpectedVPs, _catanGameBusinessLogic.GetPlayerTotalVps(theGame.ActivePlayers.FirstOrDefault()));
-            Assert.AreEqual(secondPlayerExpectedVPs, _catanGameBusinessLogic.GetPlayerTotalVps(theGame.ActivePlayers.ElementAt(1)));
+            await _catanGameBusinessLogic.AddPlayerVictoryPoint(theGame, theGame.ActivePlayers.FirstOrDefault(), vpType);
+            theGame = await GetGame();
+            Assert.AreEqual(firstPlayerExpectedVPs, theGame.ActivePlayers.FirstOrDefault());
+            Assert.AreEqual(secondPlayerExpectedVPs, theGame.ActivePlayers.ElementAt(1));
 
             vpType = new VPType(VPType.UpdateType.Interchangeable, VPType.InterChanageableVP.LongestRoad);
             firstPlayerExpectedVPs += 2;
-            await _catanGameBusinessLogic.AddPlayerVictoryPoint(theGame.Id, theGame.ActivePlayers.FirstOrDefault().Id, vpType);
-            Assert.AreEqual(firstPlayerExpectedVPs, _catanGameBusinessLogic.GetPlayerTotalVps(theGame.ActivePlayers.FirstOrDefault()));
+            await _catanGameBusinessLogic.AddPlayerVictoryPoint(theGame, theGame.ActivePlayers.FirstOrDefault(), vpType);
+            theGame = await GetGame();
+            Assert.AreEqual(firstPlayerExpectedVPs, theGame.ActivePlayers.FirstOrDefault());
 
             vpType = new VPType(VPType.UpdateType.Interchangeable, VPType.InterChanageableVP.Merchant);
             firstPlayerExpectedVPs++;
-            await _catanGameBusinessLogic.AddPlayerVictoryPoint(theGame.Id, theGame.ActivePlayers.FirstOrDefault().Id, vpType);
-            Assert.AreEqual(firstPlayerExpectedVPs, _catanGameBusinessLogic.GetPlayerTotalVps(theGame.ActivePlayers.FirstOrDefault()));
+            await _catanGameBusinessLogic.AddPlayerVictoryPoint(theGame, theGame.ActivePlayers.FirstOrDefault(), vpType);
+            theGame = await GetGame();
+            Assert.AreEqual(firstPlayerExpectedVPs, theGame.ActivePlayers.FirstOrDefault());
 
 
             vpType = new VPType(VPType.UpdateType.Interchangeable, VPType.InterChanageableVP.MetropolisCloth);
             firstPlayerExpectedVPs += 2;
-            await _catanGameBusinessLogic.AddPlayerVictoryPoint(theGame.Id, theGame.ActivePlayers.FirstOrDefault().Id, vpType);
-            Assert.AreEqual(firstPlayerExpectedVPs, _catanGameBusinessLogic.GetPlayerTotalVps(theGame.ActivePlayers.FirstOrDefault()));
+            await _catanGameBusinessLogic.AddPlayerVictoryPoint(theGame, theGame.ActivePlayers.FirstOrDefault(), vpType);
+            theGame = await GetGame();
+            Assert.AreEqual(firstPlayerExpectedVPs, theGame.ActivePlayers.FirstOrDefault());
 
 
             vpType = new VPType(VPType.UpdateType.Interchangeable, VPType.InterChanageableVP.MetropolisCoin);
             firstPlayerExpectedVPs += 2;
-            await _catanGameBusinessLogic.AddPlayerVictoryPoint(theGame.Id, theGame.ActivePlayers.FirstOrDefault().Id, vpType);
-            Assert.AreEqual(firstPlayerExpectedVPs, _catanGameBusinessLogic.GetPlayerTotalVps(theGame.ActivePlayers.FirstOrDefault()));
+            await _catanGameBusinessLogic.AddPlayerVictoryPoint(theGame, theGame.ActivePlayers.FirstOrDefault(), vpType);
+            theGame = await GetGame();
+            Assert.AreEqual(firstPlayerExpectedVPs, theGame.ActivePlayers.FirstOrDefault());
 
             vpType = new VPType(VPType.UpdateType.Interchangeable, VPType.InterChanageableVP.MetropolisPaper);
             firstPlayerExpectedVPs += 2;
-            await _catanGameBusinessLogic.AddPlayerVictoryPoint(theGame.Id, theGame.ActivePlayers.FirstOrDefault().Id, vpType);
-            Assert.AreEqual(firstPlayerExpectedVPs, _catanGameBusinessLogic.GetPlayerTotalVps(theGame.ActivePlayers.FirstOrDefault()));
+            await _catanGameBusinessLogic.AddPlayerVictoryPoint(theGame, theGame.ActivePlayers.FirstOrDefault(), vpType);
+            theGame = await GetGame();
+            Assert.AreEqual(firstPlayerExpectedVPs,theGame.ActivePlayers.FirstOrDefault());
 
             vpType = new VPType(VPType.UpdateType.SaviorOfCatan);
             firstPlayerExpectedVPs++;
-            await _catanGameBusinessLogic.AddPlayerVictoryPoint(theGame.Id, theGame.ActivePlayers.FirstOrDefault().Id, vpType);
-            Assert.AreEqual(firstPlayerExpectedVPs, _catanGameBusinessLogic.GetPlayerTotalVps(theGame.ActivePlayers.FirstOrDefault()));
-
+            await _catanGameBusinessLogic.AddPlayerVictoryPoint(theGame, theGame.ActivePlayers.FirstOrDefault(), vpType);
+            theGame = await GetGame();
+            Assert.AreEqual(firstPlayerExpectedVPs, theGame.ActivePlayers.FirstOrDefault());
 
             // Replace Interchangeable
             vpType = new VPType(VPType.UpdateType.Interchangeable, VPType.InterChanageableVP.LongestRoad);
             firstPlayerExpectedVPs -= 2;
             secondPlayerExpectedVPs += 2;
-            await _catanGameBusinessLogic.AddPlayerVictoryPoint(theGame.Id, theGame.ActivePlayers.FirstOrDefault().Id, vpType);
-            Assert.AreEqual(firstPlayerExpectedVPs, _catanGameBusinessLogic.GetPlayerTotalVps(theGame.ActivePlayers.FirstOrDefault()));
-            Assert.AreEqual(secondPlayerExpectedVPs, _catanGameBusinessLogic.GetPlayerTotalVps(theGame.ActivePlayers.ElementAt(1)));
+            await _catanGameBusinessLogic.AddPlayerVictoryPoint(theGame, theGame.ActivePlayers.FirstOrDefault(), vpType);
+            theGame = await GetGame();
+            Assert.AreEqual(firstPlayerExpectedVPs, theGame.ActivePlayers.FirstOrDefault());
+            Assert.AreEqual(secondPlayerExpectedVPs, theGame.ActivePlayers.ElementAt(1));
 
             vpType = new VPType(VPType.UpdateType.Interchangeable, VPType.InterChanageableVP.Merchant);
             firstPlayerExpectedVPs--;
             secondPlayerExpectedVPs++;
-            await _catanGameBusinessLogic.AddPlayerVictoryPoint(theGame.Id, theGame.ActivePlayers.FirstOrDefault().Id, vpType);
-            Assert.AreEqual(firstPlayerExpectedVPs, _catanGameBusinessLogic.GetPlayerTotalVps(theGame.ActivePlayers.FirstOrDefault()));
-            Assert.AreEqual(secondPlayerExpectedVPs, _catanGameBusinessLogic.GetPlayerTotalVps(theGame.ActivePlayers.ElementAt(1)));
+            await _catanGameBusinessLogic.AddPlayerVictoryPoint(theGame, theGame.ActivePlayers.FirstOrDefault(), vpType);
+            theGame = await GetGame();
+            Assert.AreEqual(firstPlayerExpectedVPs,theGame.ActivePlayers.FirstOrDefault());
+            Assert.AreEqual(secondPlayerExpectedVPs, theGame.ActivePlayers.ElementAt(1));
 
 
             vpType = new VPType(VPType.UpdateType.Interchangeable, VPType.InterChanageableVP.MetropolisCloth);
             firstPlayerExpectedVPs -= 2;
             secondPlayerExpectedVPs += 2;
-            await _catanGameBusinessLogic.AddPlayerVictoryPoint(theGame.Id, theGame.ActivePlayers.FirstOrDefault().Id, vpType);
-            Assert.AreEqual(firstPlayerExpectedVPs, _catanGameBusinessLogic.GetPlayerTotalVps(theGame.ActivePlayers.FirstOrDefault()));
-            Assert.AreEqual(secondPlayerExpectedVPs, _catanGameBusinessLogic.GetPlayerTotalVps(theGame.ActivePlayers.ElementAt(1)));
+            await _catanGameBusinessLogic.AddPlayerVictoryPoint(theGame, theGame.ActivePlayers.FirstOrDefault(), vpType);
+            theGame = await GetGame();
+            Assert.AreEqual(firstPlayerExpectedVPs, theGame.ActivePlayers.FirstOrDefault());
+            Assert.AreEqual(secondPlayerExpectedVPs, theGame.ActivePlayers.ElementAt(1));
 
 
             vpType = new VPType(VPType.UpdateType.Interchangeable, VPType.InterChanageableVP.MetropolisCoin);
             firstPlayerExpectedVPs -= 2;
             secondPlayerExpectedVPs += 2;
-            await _catanGameBusinessLogic.AddPlayerVictoryPoint(theGame.Id, theGame.ActivePlayers.FirstOrDefault().Id, vpType);
-            Assert.AreEqual(firstPlayerExpectedVPs, _catanGameBusinessLogic.GetPlayerTotalVps(theGame.ActivePlayers.FirstOrDefault()));
-            Assert.AreEqual(secondPlayerExpectedVPs, _catanGameBusinessLogic.GetPlayerTotalVps(theGame.ActivePlayers.ElementAt(1)));
+            await _catanGameBusinessLogic.AddPlayerVictoryPoint(theGame, theGame.ActivePlayers.FirstOrDefault(), vpType);
+            theGame = await GetGame();
+            Assert.AreEqual(firstPlayerExpectedVPs, theGame.ActivePlayers.FirstOrDefault());
+            Assert.AreEqual(secondPlayerExpectedVPs, theGame.ActivePlayers.ElementAt(1));
 
             vpType = new VPType(VPType.UpdateType.Interchangeable, VPType.InterChanageableVP.MetropolisPaper);
             firstPlayerExpectedVPs -= 2;
             secondPlayerExpectedVPs += 2;
-            await _catanGameBusinessLogic.AddPlayerVictoryPoint(theGame.Id, theGame.ActivePlayers.FirstOrDefault().Id, vpType);
-            Assert.AreEqual(firstPlayerExpectedVPs, _catanGameBusinessLogic.GetPlayerTotalVps(theGame.ActivePlayers.FirstOrDefault()));
-            Assert.AreEqual(secondPlayerExpectedVPs, _catanGameBusinessLogic.GetPlayerTotalVps(theGame.ActivePlayers.ElementAt(1)));
+            await _catanGameBusinessLogic.AddPlayerVictoryPoint(theGame, theGame.ActivePlayers.FirstOrDefault(), vpType);
+            theGame = await GetGame();
+            Assert.AreEqual(firstPlayerExpectedVPs, theGame.ActivePlayers.FirstOrDefault());
+            Assert.AreEqual(secondPlayerExpectedVPs,theGame.ActivePlayers.ElementAt(1));
 
             vpType = new VPType(VPType.UpdateType.SaviorOfCatan);
             secondPlayerExpectedVPs++;
-            await _catanGameBusinessLogic.AddPlayerVictoryPoint(theGame.Id, theGame.ActivePlayers.FirstOrDefault().Id, vpType);
-            Assert.AreEqual(firstPlayerExpectedVPs, _catanGameBusinessLogic.GetPlayerTotalVps(theGame.ActivePlayers.FirstOrDefault()));
-            Assert.AreEqual(secondPlayerExpectedVPs, _catanGameBusinessLogic.GetPlayerTotalVps(theGame.ActivePlayers.ElementAt(1)));
+            await _catanGameBusinessLogic.AddPlayerVictoryPoint(theGame, theGame.ActivePlayers.FirstOrDefault(), vpType);
+            theGame = await GetGame();
+            Assert.AreEqual(firstPlayerExpectedVPs, theGame.ActivePlayers.FirstOrDefault());
+            Assert.AreEqual(secondPlayerExpectedVPs, theGame.ActivePlayers.ElementAt(1));
         }
 
     }

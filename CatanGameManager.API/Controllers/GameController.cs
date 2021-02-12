@@ -72,18 +72,12 @@ namespace CatanGameManager.API.Controllers
 
         #region victory points
 
-        [HttpGet]
-        public async Task<int> GetPlayerTotalVps(ActivePlayer activePlayerId)
-        {
-            _logger?.LogInformation($"GetPlayerTotalVps for player: \"{activePlayerId}\"");
-            return await _catanGameBusinessLogic.GetPlayerTotalVps(activePlayerId);
-        }
-
+  
         [HttpPost]
-        public async Task AddPlayerVictoryPoint(Guid gameId, Guid activePlayerId, VPType updateType)
+        public async Task AddPlayerVictoryPoint(CatanGame game, ActivePlayer activePlayer, VPType updateType)
         {
-            _logger?.LogInformation($"AddPlayerVictoryPoint for game: {gameId}, activePlayer {activePlayerId} and updateType {updateType.ToString()}");
-            await _catanGameBusinessLogic.AddPlayerVictoryPoint(gameId, activePlayerId, updateType);
+            _logger?.LogInformation($"AddPlayerVictoryPoint for game: {game.Id}, activePlayer {activePlayer.Id} and updateType {updateType}");
+            await _catanGameBusinessLogic.AddPlayerVictoryPoint(game, activePlayer, updateType);
         }
 
         #endregion victory points

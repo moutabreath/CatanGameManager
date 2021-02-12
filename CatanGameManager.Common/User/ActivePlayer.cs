@@ -16,6 +16,7 @@ namespace CatanGameManager.CommonObjects.User
         public int NumOfTotalKnights { get; set; }
         public int AmountOfVictoryPoints { get; set; }
         public int SaviorOfCatanVP { get; set; }
+        public int NumOfVictoryPoints { get; set; }
         public IList <VPType.InterChanageableVP> InterChanageableVPs { get; set; }
 
     }

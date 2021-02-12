@@ -15,8 +15,8 @@ namespace CatanGameManager.Interfaces
         Task<IEnumerable<CatanGame>> GetUserActiveGames(Guid playerId);
         Task AddPlayerToGame(CatanGame catanGame, User playerProfile);
 
-        Task AddPlayerVictoryPoint(Guid gameId, Guid activePlayerId, VPType updateType);
-        Task<int> GetPlayerTotalVps(ActivePlayer activePlayer);
+        Task AddPlayerVictoryPoint(CatanGame catanGame, ActivePlayer activePlayer, VPType updateType);
+        
 
         Task<int> GetGameTotalActiveKnights(Guid gameId);
         Task AddPlayerKnight(Guid gameId, Guid activePlayerId, KnightRank knightRank);

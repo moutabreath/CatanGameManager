@@ -83,35 +83,76 @@ namespace CatanGameManager.Core
         /// </summary>
         /// <param name="activePlayer"></param>
         /// <returns></returns>
-        public async Task<int> GetPlayerTotalVps(ActivePlayer activePlayer)
+        private int GetPlayerTotalVps(ActivePlayer activePlayer)
         {
             int interchangeabelCounter = 0;
-            await Task.Run(() =>
+            foreach (VPType.InterChanageableVP interChanageableVp in activePlayer.InterChanageableVPs)
             {
-                foreach (VPType.InterChanageableVP interChanageableVp in activePlayer.InterChanageableVPs)
+                switch (interChanageableVp)
                 {
-                    switch (interChanageableVp)
-                    {
-                        case VPType.InterChanageableVP.Merchant:
-                            interchangeabelCounter++;
-                            break;
-                        case VPType.InterChanageableVP.LongestRoad:
-                        case VPType.InterChanageableVP.MetropolisCloth:
-                        case VPType.InterChanageableVP.MetropolisCoin:
-                        case VPType.InterChanageableVP.MetropolisPaper:
-                            interchangeabelCounter += 2;
-                            break;
-                    }
+                    case VPType.InterChanageableVP.Merchant:
+                        interchangeabelCounter++;
+                        break;
+                    case VPType.InterChanageableVP.LongestRoad:
+                    case VPType.InterChanageableVP.MetropolisCloth:
+                    case VPType.InterChanageableVP.MetropolisCoin:
+                    case VPType.InterChanageableVP.MetropolisPaper:
+                        interchangeabelCounter += 2;
+                        break;
                 }
-            });
+            }
+
             return interchangeabelCounter + activePlayer.NumOfCities * 2 + activePlayer.NumOfSettlements + activePlayer.SaviorOfCatanVP;
         }
 
-        public async Task AddPlayerVictoryPoint(Guid catanGameId, Guid activePlayerId, VPType updateType)
+        public async Task AddPlayerVictoryPoint(CatanGame catanGame, ActivePlayer activePlayer, VPType updateType)
         {
-            _logger?.LogInformation($"AddPlayerVictoryPoint for catanGame: {activePlayerId}, player: {activePlayerId}, updateType: {updateType.ToString()}");
-            await _catanGamePersist.AddPlayerVictoryPoint(catanGameId, activePlayerId, updateType);
+            _logger?.LogInformation($"AddPlayerVictoryPoint for catanGame: {catanGame.Id}, player: {activePlayer.Id}, updateType: {updateType}");
+            if (updateType.TypeToUpdate == VPType.UpdateType.Interchangeable)
+            {
+                IEnumerable<ActivePlayer> playerOwningInterchangeable = catanGame?.ActivePlayers.Where(player => player.InterChanageableVPs.Contains(updateType.TypeOfInterchangeable));
+                ActivePlayer activePlayerToReduceVp = playerOwningInterchangeable?.FirstOrDefault();
+                activePlayerToReduceVp?.InterChanageableVPs.Remove(updateType.TypeOfInterchangeable);
+                catanGame.ActivePlayers.Remove(activePlayerToReduceVp);
+                catanGame.ActivePlayers.Add(activePlayerToReduceVp);
+                activePlayer.InterChanageableVPs.Add(updateType.TypeOfInterchangeable);
+                catanGame.ActivePlayers.Remove(activePlayer);
+                catanGame.ActivePlayers.Add(activePlayer);
+                await _catanGamePersist.UpdateGame(catanGame);
+                return;
+            }
+            await AddNonInterchaneableVPs(catanGame, activePlayer, updateType);
         }
+
+        private async Task AddNonInterchaneableVPs(CatanGame catanGame, ActivePlayer activePlayer, VPType updateType)
+        {
+            _logger?.LogInformation($"AddVPsToSelectedPlayer game: {catanGame.Id}, player {activePlayer.Id}, updateType: {updateType.TypeToUpdate}");
+            int playerNumberOfVictoryPoints = 0;
+            switch (updateType.TypeToUpdate)
+            {
+                //TODO: Update remaining settlements / cities
+                case VPType.UpdateType.City:
+                    catanGame.BanditsStrength++;
+                    activePlayer.NumOfCities++;
+                    break;
+                case VPType.UpdateType.Settlment:
+                    activePlayer.NumOfSettlements++;
+                    break;
+                case VPType.UpdateType.SaviorOfCatan:
+                    activePlayer.SaviorOfCatanVP++;
+                    break;
+                case VPType.UpdateType.Constitution:
+                case VPType.UpdateType.Printer:
+                    playerNumberOfVictoryPoints++;
+                    break;
+            }
+            activePlayer.NumOfVictoryPoints = GetPlayerTotalVps(activePlayer);
+            catanGame.ActivePlayers.Remove(activePlayer);
+            catanGame.ActivePlayers.Add(activePlayer);
+            await _catanGamePersist.UpdateGame(catanGame);
+        }
+
+
 
         #endregion victory points
 
@@ -128,7 +169,7 @@ namespace CatanGameManager.Core
             _logger?.LogInformation($"AddPlayerKnight for catanGame: {catanGameId}, player: {activePlayerId}, knightRank: {knightRank}");
             await _catanGamePersist.AddPlayerKnight(catanGameId, activePlayerId, knightRank);
         }
-        
+
         public async Task AdvanceBarbarians(Guid catanGameId)
         {
             _logger?.LogInformation($"AdvanceBarbarians for catanGame: {catanGameId}");
@@ -146,6 +187,7 @@ namespace CatanGameManager.Core
             _logger?.LogInformation($"DeactivateAllKnights for catanGame: {catanGameId}");
             await _catanGamePersist.DeactivateAllKnights(catanGameId);
         }
+      
 
         #endregion  game and player knights
     }

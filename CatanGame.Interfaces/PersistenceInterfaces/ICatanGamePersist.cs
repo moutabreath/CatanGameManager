@@ -16,8 +16,6 @@ namespace CatanGameManager.Interfaces.PersistanceInterfaces
         
         Task UpdatePlayerInGame(CatanGame catanGame, ActivePlayer playerToUpdate);
 
-        Task AddPlayerVictoryPoint(Guid gameId, Guid activePlayerId, VPType updateType);
-
         Task<int> GetGameTotalActiveKnights(Guid gameId);
         Task AddPlayerKnight(Guid gameId, Guid activePlayerId, KnightRank knightRank);
         Task AdvanceBarbarians(Guid gameId);

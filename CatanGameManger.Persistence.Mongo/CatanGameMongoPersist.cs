@@ -73,7 +73,7 @@ namespace CatanGamePersistence.MongoDB
             if (catanGame.Id == Guid.Empty) catanGame.Id = Guid.NewGuid();
             _logger?.LogInformation($"UpdateGame game: {catanGame.Id}");
             IMongoCollection<CatanGame> gameCollection = Database.GetCollection<CatanGame>(_documentName);
-            FilterDefinition<CatanGame> filter = Builders<CatanGame>.Filter.Where(x => x.Id == catanGame.Id);
+            FilterDefinition<CatanGame> filter = Builders<CatanGame>.Filter.Where(game => game.Id == catanGame.Id);
             await UpdateEntity(catanGame, gameCollection, filter);
         }
 
@@ -84,106 +84,17 @@ namespace CatanGamePersistence.MongoDB
             await gameCollection.DeleteOneAsync(game => game.Id == catanGame.Id);
         }
 
-        public async Task AddPlayerVictoryPoint(Guid catanGameId, Guid activePlayerId, VPType updateType)
-        {
-            _logger?.LogInformation($"AddPlayerVictoryPoint game: {catanGameId}, player: {activePlayerId}, updateType: {updateType.TypeToUpdate} {updateType.TypeOfInterchangeable}");
-
-            IMongoCollection<CatanGame> gameCollection = Database.GetCollection<CatanGame>(_documentName);
-
-            await ReduceVPsForPrevPlayer(catanGameId, updateType, gameCollection);
-            await AddVPsToSelectedPlayer(gameCollection, catanGameId, activePlayerId, updateType);
-        }
-
-        private async Task AddVPsToSelectedPlayer(IMongoCollection<CatanGame> gameCollection, Guid gameId, Guid activePlayerId, VPType updateType)
-        {
-            _logger?.LogInformation($"AddVPsToSelectedPlayer game: {gameId}, player {activePlayerId}, updateType: {updateType.TypeToUpdate} {updateType.TypeOfInterchangeable}");
-
-            IAsyncCursor<CatanGame> playerGameCursor = await gameCollection.FindAsync(game => game.Id == gameId);
-            CatanGame playerGame = playerGameCursor.FirstOrDefault();
-
-            int oldPlayerVPs = playerGame.ActivePlayers.FirstOrDefault(player => player.Id == activePlayerId).AmountOfVictoryPoints;
-            switch (updateType.TypeToUpdate)
-            {
-                //TODO: Update remaining settlements / cities
-                case VPType.UpdateType.City:
-                    var updateDef = Builders<CatanGame>.Update.Set(game => game.BanditsStrength, ++playerGame.BanditsStrength);
-                    gameCollection.UpdateOne(game => game.Id == playerGame.Id, updateDef);
-                    break;
-                case VPType.UpdateType.Constitution:
-                case VPType.UpdateType.Printer:
-                case VPType.UpdateType.SaviorOfCatan:
-                    FilterDefinition<CatanGame> activePlayerFilter = Builders<CatanGame>.Filter.Where(x =>
-                        x.Id == gameId
-                        && x.ActivePlayers.Any(activePlayer => activePlayer.Id == activePlayerId));
-                    UpdateDefinition<CatanGame> updateActivePlayer = Builders<CatanGame>.Update
-                        .Set(x => x.ActivePlayers[-1].AmountOfVictoryPoints, ++oldPlayerVPs);
-                    await gameCollection.UpdateOneAsync(activePlayerFilter, updateActivePlayer);
-                    break;
-            }
-        }
-
-        private async Task ReduceVPsForPrevPlayer(Guid gameId, VPType updateType, IMongoCollection<CatanGame> gameCollection)
-        {
-            if (updateType.TypeToUpdate != VPType.UpdateType.Interchangeable) return;
-
-            IAsyncCursor<CatanGame> cursor = await gameCollection.FindAsync(game => game.Id == gameId);
-            IEnumerable<ActivePlayer> playerOwningInterchangeable = cursor.FirstOrDefault()
-                ?.ActivePlayers.Where(player => player.InterChanageableVPs.Contains(updateType.TypeOfInterchangeable));
-
-            ActivePlayer activePlayerToReduceVp = playerOwningInterchangeable?.FirstOrDefault();
-            if (activePlayerToReduceVp != null)
-            {
-                _logger?.LogInformation($"ReduceVPsForPrevPlayer: \"{gameId}\" found interchangeable VP for player {activePlayerToReduceVp.Id}" +
-                    $" updateType: {updateType.TypeToUpdate} {updateType.TypeOfInterchangeable}");
-
-                UpdateInterchangeableForPrevPlayer(gameId, updateType, gameCollection, activePlayerToReduceVp);
-
-                int amountOfPointsToReduce = 0;
-                switch (updateType.TypeOfInterchangeable)
-                {
-                    case VPType.InterChanageableVP.Merchant:
-                        amountOfPointsToReduce = 1;
-                        break;
-                    case VPType.InterChanageableVP.MetropolisPaper:
-                    case VPType.InterChanageableVP.LongestRoad:
-                    case VPType.InterChanageableVP.MetropolisCloth:
-                    case VPType.InterChanageableVP.MetropolisCoin:
-                        amountOfPointsToReduce = 2;
-                        break;
-                }
-                gameCollection.FindOneAndUpdate(game => game.Id == gameId &&
-                                                                game.ActivePlayers.Any(activePlayer => activePlayer.Id == activePlayerToReduceVp.Id),
-                            Builders<CatanGame>.Update.Set(catanGame => catanGame.ActivePlayers[-1].AmountOfVictoryPoints,
-                                activePlayerToReduceVp.AmountOfVictoryPoints - amountOfPointsToReduce));
-            }
-        }
-
-        private static void UpdateInterchangeableForPrevPlayer(Guid gameId, VPType updateType, IMongoCollection<CatanGame> gameCollection,
-            ActivePlayer activePlayerToReduceVp)
-        {
-            IList<VPType.InterChanageableVP> newInterChanageableVps = new List<VPType.InterChanageableVP>();
-            foreach (VPType.InterChanageableVP interChanageableVP in activePlayerToReduceVp.InterChanageableVPs)
-            {
-                if (interChanageableVP != updateType.TypeOfInterchangeable)
-                {
-                    newInterChanageableVps.Add(interChanageableVP);
-                }
-            }
-
-            gameCollection.FindOneAndUpdate(game => game.Id == gameId &&
-                                                    game.ActivePlayers.Any(activePlayer => activePlayer.Id == activePlayerToReduceVp.Id), // find this match
-                Builders<CatanGame>.Update.Set(c => c.ActivePlayers[-1].InterChanageableVPs, newInterChanageableVps));
-        }
+    
 
         public async Task DeactivateAllKnights(Guid catanGameId)
         {
             _logger?.LogInformation($"DeactivateAllKnights game: {catanGameId}");
             IMongoCollection<CatanGame> gameCollection = Database.GetCollection<CatanGame>(_documentName);
             FilterDefinition<CatanGame> filter = Builders<CatanGame>.Filter
-    .Where(x => x.Id == catanGameId // Select the parent document first by its ID
-    && x.ActivePlayers.Any(y => y != null));  // Now filter the matching items in the nested array to be updated ONLY
+                            .Where(x => x.Id == catanGameId // Select the parent document first by its ID
+                            && x.ActivePlayers.Any(activePlayer => activePlayer != null));  // Now filter the matching items in the nested array to be updated ONLY
 
-            var update = Builders<CatanGame>.Update
+            UpdateDefinition<CatanGame> update = Builders<CatanGame>.Update
                 .Set(x => x.ActivePlayers[-1].NumOfActiveKnights, 0); // The "-1" index matches ALL the items matching the filter
 
             await gameCollection.UpdateOneAsync(filter, update);
