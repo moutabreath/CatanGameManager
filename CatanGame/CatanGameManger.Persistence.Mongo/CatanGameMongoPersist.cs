@@ -88,9 +88,7 @@ namespace CatanGamePersistence.MongoDB
             _logger?.LogInformation($"RemoveGame: {catanGame.Id}");
             IMongoCollection<CatanGame> gameCollection = Database.GetCollection<CatanGame>(_documentName);
             await gameCollection.DeleteOneAsync(game => game.Id == catanGame.Id);
-        }
-
-    
+        }    
 
         public async Task DeactivateAllKnights(Guid catanGameId)
         {

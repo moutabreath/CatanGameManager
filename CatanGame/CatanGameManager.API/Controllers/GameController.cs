@@ -55,10 +55,10 @@ namespace CatanGameManager.API.Controllers
         }
 
         [HttpPost]
-        public async Task AddPlayerToGame(CatanGame catanGame, User user)
+        public async Task AddPlayerToGame(CatanGame catanGame, Guid userId, string userName)
         {
-            _logger?.LogInformation($"AddPlayerToGame for game: {catanGame.Id} and user: {user.Id} ");
-            await _catanGameBusinessLogic.AddPlayerToGame(catanGame, user);
+            _logger?.LogInformation($"AddPlayerToGame for game: {catanGame.Id} and user: {userId} ");
+            await _catanGameBusinessLogic.AddPlayerToGame(catanGame, userId, userName);
         }
 
         [HttpPost]

@@ -13,7 +13,7 @@ namespace CatanGameManager.Interfaces
         Task<CatanGame> GetGame(Guid gameId);
         Task RemoveGame(CatanGame catanGame);        
         Task<IEnumerable<CatanGame>> GetUserActiveGames(Guid playerId);
-        Task AddPlayerToGame(CatanGame catanGame, User playerProfile);
+        Task AddPlayerToGame(CatanGame catanGame, Guid userId, string userName);
 
         Task AddPlayerVictoryPoint(CatanGame catanGame, ActivePlayer activePlayer, VPType updateType);
         

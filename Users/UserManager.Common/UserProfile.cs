@@ -1,8 +1,9 @@
-﻿namespace CatanGameManager.CommonObjects.User
+﻿using System;
+
+namespace CatanGameManager.CommonObjects.User
 {
-    public class UserProfile 
+    public class UserProfile : Entity
     {
-        public Guid Id { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }

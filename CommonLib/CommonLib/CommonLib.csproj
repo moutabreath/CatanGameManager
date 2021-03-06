@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
@@ -6,11 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
+    <PackageReference Include="MongoDB.Driver" Version="2.12.0" />
   </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\User.Interfaces\UserManager.Interfaces.csproj" />
-  </ItemGroup>
-
 
 </Project>

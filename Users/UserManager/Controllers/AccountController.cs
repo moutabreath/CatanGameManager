@@ -25,31 +25,31 @@ namespace CatanGameManager.API.Controllers
             _catanUserBusinessLogic = catanUserBusinessLogic;
         }
       
-        public async Task<bool> RegisterUser(User user)
+        public async Task<bool> RegisterUser(UserProfile user)
         {
             _logger?.LogInformation($"RegisterUser for user:  \"{user.Id}\"");
             return await _catanUserBusinessLogic.RegisterPlayer(user);
         }
 
-        public async Task UpdateUser(User user)
+        public async Task UpdateUser(UserProfile user)
         {
             _logger?.LogInformation($"UpdatePlayer for user:  \"{user.Id}\"");
             await _catanUserBusinessLogic.UpdatePlayer(user);
         }
 
-        public async Task<User> GetUser(string userName, string password)
+        public async Task<UserProfile> GetUser(string userName, string password)
         {
             _logger?.LogInformation($"GetUser:  \"{userName}\"");
             return await _catanUserBusinessLogic.GetUser(userName, password);
         }
 
-        public async Task<List<User>> SearchPlayer(string userName)
+        public async Task<List<UserProfile>> SearchPlayer(string userName)
         {
             _logger?.LogInformation($"GetAvailableUsers for game admin:  \"{userName}\"");
             return await _catanUserBusinessLogic.SearchUser(userName);
         }
 
-        public async Task<List<User>> GetUserActiveGames(string userName)
+        public async Task<List<UserProfile>> GetUserActiveGames(string userName)
         {
             _logger?.LogInformation($"GetUserActiveGames for  user:  \"{userName}\"");
             return await _catanUserBusinessLogic.SearchUser(userName);

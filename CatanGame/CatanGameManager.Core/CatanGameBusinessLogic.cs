@@ -42,21 +42,21 @@ namespace CatanGameManager.Core
             return await _catanGamePersist.GetUserActiveGames(activePlayerId);
         }
 
-        public async Task AddPlayerToGame(CatanGame catanGame, User user)
+        public async Task AddPlayerToGame(CatanGame catanGame, Guid userId, string userName)
         {
-            _logger?.LogInformation($"AddPlayerToGame for catanGame: {catanGame.Id}, player: {user.Id}: {user.Name}");
+            _logger?.LogInformation($"AddPlayerToGame for catanGame: {catanGame.Id}, player: {userId}: {userName}");
 
             ActivePlayer activePlayer = new ActivePlayer
             {
                 Id = Guid.NewGuid(),
-                UserId = user.Id,
+                UserId = userId,
                 InterChanageableVPs = new List<VPType.InterChanageableVP>(),
                 NumOfActiveKnights = 0,
                 NumOfCities = 0,
                 NumOfContinousRoads = 0,
                 NumOfSettlements = 0,
                 NumOfTotalKnights = 0,
-                Name = user.Name
+                Name = userName
             };
 
             catanGame.ActivePlayers.Add(activePlayer);

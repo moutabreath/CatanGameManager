@@ -4,4 +4,9 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\User.Interfaces\UserManager.Interfaces.csproj" />
+    <ProjectReference Include="..\UserManager.Common\UserManager.Common.csproj" />
+  </ItemGroup>
+
 </Project>
