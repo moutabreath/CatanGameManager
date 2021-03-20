@@ -7,6 +7,7 @@
   <ItemGroup>
     <ProjectReference Include="..\CatanGame.Interfaces\CatanGameManager.Interfaces.csproj" />
     <ProjectReference Include="..\CatanGameManager.Core\CatanGameManager.Core.csproj" />
+    <ProjectReference Include="..\CatanGameManger.Persistence.Mongo\CatanGameManger.Persistence.Mongo.csproj" />
   </ItemGroup>
 
 

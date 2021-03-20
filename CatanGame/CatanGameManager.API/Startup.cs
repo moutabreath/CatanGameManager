@@ -1,3 +1,7 @@
+using CatanGameManager.Core;
+using CatanGameManager.Interfaces;
+using CatanGameManager.Interfaces.PersistanceInterfaces;
+using CatanGamePersistence.MongoDB;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -18,6 +22,8 @@ namespace CatanGameManager.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddScoped<ICatanGameBusinessLogic, CatanGameBusinessLogic>();
+            services.AddScoped<ICatanGamePersist, CatanGameMongoPersist>();
             services.AddControllers();
         }
 

@@ -8,6 +8,8 @@ using CatanGameManager.Interfaces.PersistanceInterfaces;
 using CatanGameManager.CommonObjects.User;
 using CatanGameManager.CommonObjects.Enums;
 using System.Linq;
+using Confluent.Kafka;
+using System.Net;
 
 namespace CatanGameManager.Core
 {
@@ -105,7 +107,21 @@ namespace CatanGameManager.Core
                 }
             }
 
-            return interchangeabelCounter + activePlayer.NumOfCities * 2 + activePlayer.NumOfSettlements + activePlayer.SaviorOfCatanVP + activePlayer.SpecialVictoryPoints;
+            int numberOfVps = interchangeabelCounter + activePlayer.NumOfCities * 2 + activePlayer.NumOfSettlements + activePlayer.SaviorOfCatanVP + activePlayer.SpecialVictoryPoints;
+            if (numberOfVps == 13)
+            {
+                var config = new ProducerConfig
+                {
+                    BootstrapServers = "host1:9092,host2:9092",
+                    ClientId = Dns.GetHostName()
+                };
+
+
+                using (var producer = new ProducerBuilder<Null, string>(config).Build())
+                {
+                }
+            }
+            return numberOfVps;
         }
 
         public async Task AddPlayerVictoryPoint(CatanGame catanGame, ActivePlayer activePlayer, VPType updateType)

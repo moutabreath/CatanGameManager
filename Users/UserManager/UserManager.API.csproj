@@ -10,6 +10,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\User.Interfaces\UserManager.Interfaces.csproj" />
+    <ProjectReference Include="..\UserManager.Core\UserManager.Core.csproj" />
+    <ProjectReference Include="..\UserManager.MongoPersist\UserManager.MongoPersist.csproj" />
   </ItemGroup>
 
 
