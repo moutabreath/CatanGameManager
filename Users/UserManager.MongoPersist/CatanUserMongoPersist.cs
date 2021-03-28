@@ -35,7 +35,7 @@ namespace CatanGamePersistence.MongoDB
         public async Task UpdateUser(UserProfile playerProfile)
         {
             if (playerProfile.Id == Guid.Empty) playerProfile.Id = Guid.NewGuid();
-            _logger?.LogInformation($"UpdateUser: \"{playerProfile.Id}\" "); 
+            _logger?.LogDebug($"UpdateUser: \"{playerProfile.Id}\" "); 
             await UpdateEntity(playerProfile, 
                 Database.GetCollection<UserProfile>(_playerProfileDoc), 
                 Builders<UserProfile>.Filter.Where(x => x.Id == playerProfile.Id));
@@ -43,7 +43,7 @@ namespace CatanGamePersistence.MongoDB
 
         public async Task<UserProfile> GetUser(string userName, string password)
         {
-            _logger?.LogInformation($"GetUser: \"{userName}\" ");
+            _logger?.LogDebug($"GetUser: \"{userName}\" ");
             IMongoCollection<UserProfile> playerCollection = Database.GetCollection<UserProfile>(_playerProfileDoc);
             IAsyncCursor<UserProfile> response = await playerCollection.FindAsync(playerProfile => playerProfile.Email == userName && playerProfile.Password == password);
             return response.FirstOrDefault();
@@ -51,7 +51,7 @@ namespace CatanGamePersistence.MongoDB
 
         public async Task UnRegisterUser(Guid userId)
         {
-            _logger?.LogInformation($"UnRegisterUser: \"{userId}\" ");
+            _logger?.LogDebug($"UnRegisterUser: \"{userId}\" ");
             IMongoCollection<UserProfile> playerCollection = Database.GetCollection<UserProfile>(_playerProfileDoc);
             await playerCollection.DeleteOneAsync(playerProfile => playerProfile.Id == userId);
         }

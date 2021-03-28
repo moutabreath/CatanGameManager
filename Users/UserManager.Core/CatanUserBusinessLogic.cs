@@ -21,7 +21,7 @@ namespace CatanGameManager.Core
 
         public async Task<bool> RegisterPlayer(UserProfile playerProfile)
         {
-            _logger?.LogInformation($"AddPlayer: {playerProfile.Id}");
+            _logger?.LogDebug($"AddPlayer: {playerProfile.Id}");
             UserProfile user = await GetUser(playerProfile.Name, playerProfile.Password);
             if (user != null) return false;
 
@@ -31,25 +31,25 @@ namespace CatanGameManager.Core
 
         public async Task UpdatePlayer(UserProfile playerProfile)
         {
-            _logger?.LogInformation($"UpdatePlayer: {playerProfile.Name}");
+            _logger?.LogDebug($"UpdatePlayer: {playerProfile.Name}");
             await _catanGamePersist.UpdateUser(playerProfile);
         }
 
         public async Task<UserProfile> GetUser(string userName, string password)
         {
-            _logger?.LogInformation($"GetPlayer: {userName}");
+            _logger?.LogDebug($"GetPlayer: {userName}");
             return await _catanGamePersist.GetUser(userName, password);
         }
         
         public async Task UnRegisterUser(Guid userId)
         {
-            _logger?.LogInformation($"UnRegisterUser: {userId}");
+            _logger?.LogDebug($"UnRegisterUser: {userId}");
              await _catanGamePersist.UnRegisterUser(userId);
         }
 
         public Task<List<UserProfile>> SearchUser(string userName)
         {
-            _logger?.LogInformation($"SearchUser: {userName}");
+            _logger?.LogDebug($"SearchUser: {userName}");
             throw new NotImplementedException();
         } 
     }

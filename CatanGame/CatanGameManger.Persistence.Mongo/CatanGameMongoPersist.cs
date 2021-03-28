@@ -37,7 +37,7 @@ namespace CatanGamePersistence.MongoDB
        
         public async Task UpdatePlayerInGame(CatanGame catanGame, ActivePlayer playerToUpdate)
         {
-            _logger?.LogInformation($"UpdatePlayerInGame, game: {catanGame.Id}, player: {playerToUpdate.Id}");
+            _logger?.LogDebug($"UpdatePlayerInGame, game: {catanGame.Id}, player: {playerToUpdate.Id}");
             bool doesPlayerExist = catanGame.ActivePlayers.Select(activePlayer => activePlayer.Id == playerToUpdate.Id).
                 FirstOrDefault();
             if (!doesPlayerExist)
@@ -54,7 +54,7 @@ namespace CatanGamePersistence.MongoDB
 
         public async Task<CatanGame> GetGame(Guid gameId)
         {
-            _logger?.LogInformation($"GetGame: {gameId}");
+            _logger?.LogDebug($"GetGame: {gameId}");
             IMongoCollection<CatanGame> collection = Database.GetCollection<CatanGame>(_documentName);
             IAsyncCursor<CatanGame> catanGameCursor = await collection.FindAsync(game => game.Id == gameId);
             return catanGameCursor.First();
@@ -62,7 +62,7 @@ namespace CatanGamePersistence.MongoDB
 
         public async Task<IEnumerable<CatanGame>> GetUserActiveGames(Guid userId)
         {
-            _logger?.LogInformation($"GetPlayerActiveGames for player: {userId}");
+            _logger?.LogDebug($"GetPlayerActiveGames for player: {userId}");
             IMongoCollection<CatanGame> collection = Database.GetCollection<CatanGame>(_documentName);
             IAsyncCursor<CatanGame> playerGames = await collection.FindAsync(game => game.ActivePlayers.Any(activePlayer => activePlayer.UserId == userId));
             return playerGames.ToList();
@@ -77,7 +77,7 @@ namespace CatanGamePersistence.MongoDB
                 catanGame.BanditsStrength = 0;
                 catanGame.RecentDiceRolls = new List<Tuple<int, int>>();
             }
-            _logger?.LogInformation($"UpdateGame game: {catanGame.Id}");
+            _logger?.LogDebug($"UpdateGame game: {catanGame.Id}");
             IMongoCollection<CatanGame> gameCollection = Database.GetCollection<CatanGame>(_documentName);
             FilterDefinition<CatanGame> filter = Builders<CatanGame>.Filter.Where(game => game.Id == catanGame.Id);
             await UpdateEntity(catanGame, gameCollection, filter);
@@ -85,18 +85,18 @@ namespace CatanGamePersistence.MongoDB
 
         public async Task RemoveGame(CatanGame catanGame)
         {
-            _logger?.LogInformation($"RemoveGame: {catanGame.Id}");
+            _logger?.LogDebug($"RemoveGame: {catanGame.Id}");
             IMongoCollection<CatanGame> gameCollection = Database.GetCollection<CatanGame>(_documentName);
             await gameCollection.DeleteOneAsync(game => game.Id == catanGame.Id);
         }    
 
         public async Task DeactivateAllKnights(Guid catanGameId)
         {
-            _logger?.LogInformation($"DeactivateAllKnights game: {catanGameId}");
+            _logger?.LogDebug($"DeactivateAllKnights game: {catanGameId}");
             IMongoCollection<CatanGame> gameCollection = Database.GetCollection<CatanGame>(_documentName);
             FilterDefinition<CatanGame> filter = Builders<CatanGame>.Filter
-                            .Where(x => x.Id == catanGameId // Select the parent document first by its ID
-                            && x.ActivePlayers.Any(activePlayer => activePlayer != null));  // Now filter the matching items in the nested array to be updated ONLY
+                            .Where(catanGame => catanGame.Id == catanGameId // Select the parent document first by its ID
+                            && catanGame.ActivePlayers.Any(activePlayer => activePlayer != null));  // Now filter the matching items in the nested array to be updated ONLY
 
             UpdateDefinition<CatanGame> update = Builders<CatanGame>.Update
                 .Set(x => x.ActivePlayers[-1].NumOfActiveKnights, 0); // The "-1" index matches ALL the items matching the filter
@@ -106,24 +106,24 @@ namespace CatanGamePersistence.MongoDB
 
         public async Task ActivateAllKnightsForPlayer(Guid catanGameId, Guid playerId)
         {
-            _logger?.LogInformation($"ActivateAllKnightsForPlayer, game: {catanGameId}, player: {playerId}");
+            _logger?.LogDebug($"ActivateAllKnightsForPlayer, game: {catanGameId}, player: {playerId}");
+
             IMongoCollection<CatanGame> gameCollection = Database.GetCollection<CatanGame>(_documentName);
 
             ActivePlayer activePlayerToUpdate = gameCollection.AsQueryable().Where(game => game.Id == catanGameId).FirstOrDefault().
                ActivePlayers.Where(activePlayer => activePlayer.Id == playerId).FirstOrDefault();
 
             FilterDefinition<CatanGame> filter = Builders<CatanGame>.Filter
-    .Where(x => x.Id == catanGameId // Select the parent document first by its ID
-    && x.ActivePlayers.Any(y => y != null));  // Now filter the matching items in the nested array to be updated ONLY
+                        .Where(x => x.Id == catanGameId // Select the parent document first by its ID
+                        && x.ActivePlayers.Any(y => y != null));  // Now filter the matching items in the nested array to be updated ONLY
 
-            var update = Builders<CatanGame>.Update
-                .Set(x => x.ActivePlayers[-1].NumOfActiveKnights, activePlayerToUpdate.NumOfTotalKnights); // The "-1" index matches ALL the items matching the filter
+            var update = Builders<CatanGame>.Update.Set(x => x.ActivePlayers[-1].NumOfActiveKnights, activePlayerToUpdate.NumOfTotalKnights); // The "-1" index matches ALL the items matching the filter
             await gameCollection.UpdateOneAsync(filter, update);
         }
 
         public async Task AdvanceBarbarians(Guid catanGameId)
         {
-            _logger?.LogInformation($"AdvanceBarbarians, game: {catanGameId}");
+            _logger?.LogDebug($"AdvanceBarbarians, game: {catanGameId}");
             IMongoCollection<CatanGame> gameCollection = Database.GetCollection<CatanGame>(_documentName);
             IAsyncCursor<CatanGame> catanGameCursor = await gameCollection.FindAsync(game => game.Id == catanGameId);
             CatanGame game = catanGameCursor.FirstOrDefault();
@@ -137,7 +137,7 @@ namespace CatanGamePersistence.MongoDB
 
         public async Task AddPlayerKnight(Guid catanGameId, Guid activePlayerId, KnightRank knightRank)
         {
-            _logger?.LogInformation($"AddPlayerKnight: {catanGameId}, activePlayerId: {activePlayerId}, knightRank: {knightRank}");
+            _logger?.LogDebug($"AddPlayerKnight: {catanGameId}, activePlayerId: {activePlayerId}, knightRank: {knightRank}");
             int knightsNumberToAdd = 0;
             switch (knightRank)
             {
@@ -164,7 +164,7 @@ namespace CatanGamePersistence.MongoDB
      
         public async Task<int> GetTotalActiveKnights(Guid catanGameId)
         {
-            _logger?.LogInformation($"GetTotalActiveKnights: {catanGameId}");
+            _logger?.LogDebug($"GetTotalActiveKnights: {catanGameId}");
             IMongoCollection<CatanGame> gameCollection = Database.GetCollection<CatanGame>(_documentName);
             IAsyncCursor<CatanGame> catanGameCursor = await gameCollection.FindAsync(game => game.Id == catanGameId);
             int totalNumberOfActiveKnights = catanGameCursor.FirstOrDefault().ActivePlayers.Sum(activePlayer => activePlayer.NumOfTotalKnights);
@@ -173,7 +173,7 @@ namespace CatanGamePersistence.MongoDB
 
         public async Task<int> GetGameTotalActiveKnights(Guid catanGameId)
         {
-            _logger?.LogInformation($"GetGameTotalActiveKnights: {catanGameId}");
+            _logger?.LogDebug($"GetGameTotalActiveKnights: {catanGameId}");
             IMongoCollection<CatanGame> gameCollection = Database.GetCollection<CatanGame>(_documentName);
             IAsyncCursor<CatanGame> catanGameCursor = await gameCollection.FindAsync(game => game.Id == catanGameId);
             CatanGame catanGame = catanGameCursor.First();

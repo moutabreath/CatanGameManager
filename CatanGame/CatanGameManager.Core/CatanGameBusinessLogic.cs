@@ -10,6 +10,7 @@ using CatanGameManager.CommonObjects.Enums;
 using System.Linq;
 using Confluent.Kafka;
 using System.Net;
+using static Confluent.Kafka.ConfigPropertyNames;
 
 namespace CatanGameManager.Core
 {
@@ -85,7 +86,7 @@ namespace CatanGameManager.Core
         /// </summary>
         /// <param name="activePlayer"></param>
         /// <returns></returns>
-        private int GetPlayerTotalVps(ActivePlayer activePlayer)
+        private async Task <int> GetPlayerTotalVps(ActivePlayer activePlayer)
         {
             int interchangeabelCounter = 0;
             if (activePlayer.InterChanageableVPs != null)
@@ -108,17 +109,24 @@ namespace CatanGameManager.Core
             }
 
             int numberOfVps = interchangeabelCounter + activePlayer.NumOfCities * 2 + activePlayer.NumOfSettlements + activePlayer.SaviorOfCatanVP + activePlayer.SpecialVictoryPoints;
-            if (numberOfVps == 13)
+            if (numberOfVps >= 13)
             {
-                var config = new ProducerConfig
-                {
-                    BootstrapServers = "host1:9092,host2:9092",
-                    ClientId = Dns.GetHostName()
-                };
+                var config = new ProducerConfig { BootstrapServers = "localhost:9092" };
 
-
-                using (var producer = new ProducerBuilder<Null, string>(config).Build())
+                // If serializers are not specified, default serializers from
+                // `Confluent.Kafka.Serializers` will be automatically used where
+                // available. Note: by default strings are encoded as UTF8.
+                using (IProducer<Null, string> producer = new ProducerBuilder<Null, string>(config).Build())
                 {
+                    try
+                    {
+                        DeliveryResult<Null, string> directoryResult = await producer.ProduceAsync("player-points", new Message<Null, string> { Value = $"{activePlayer.UserId}" });
+                        _logger?.LogInformation($"Delivered '{directoryResult.Value}' to '{directoryResult.TopicPartitionOffset}'");
+                    }
+                    catch (ProduceException<Null, string> ex)
+                    {
+                        _logger?.LogError("Error producing ", ex);
+                    }
                 }
             }
             return numberOfVps;
@@ -134,11 +142,11 @@ namespace CatanGameManager.Core
                 if (reduceVPCandidate != null)
                 {
                     reduceVPCandidate.InterChanageableVPs.Remove(updateType.TypeOfInterchangeable);
-                    reduceVPCandidate.NumOfVictoryPoints = GetPlayerTotalVps(reduceVPCandidate);
+                    reduceVPCandidate.NumOfVictoryPoints = await GetPlayerTotalVps(reduceVPCandidate);
                 }
 
                 activePlayer.InterChanageableVPs.Add(updateType.TypeOfInterchangeable);
-                activePlayer.NumOfVictoryPoints = GetPlayerTotalVps(activePlayer);
+                activePlayer.NumOfVictoryPoints = await GetPlayerTotalVps(activePlayer);
                 await _catanGamePersist.UpdateGame(catanGame);
                 return;
             }
@@ -166,7 +174,7 @@ namespace CatanGameManager.Core
                     activePlayer.SpecialVictoryPoints++;
                     break;
             }
-            activePlayer.NumOfVictoryPoints = GetPlayerTotalVps(activePlayer);
+            activePlayer.NumOfVictoryPoints = await GetPlayerTotalVps(activePlayer);
             await _catanGamePersist.UpdateGame(catanGame);
         }
 

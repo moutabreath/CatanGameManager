@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
+using System.IO;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
-using CatanGameManager.CommonObjects;
 using CatanGameManager.CommonObjects.User;
 using CatanGameManager.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -23,42 +24,44 @@ namespace CatanGameManager.API.Controllers
         {
             _logger = logger;
             _catanUserBusinessLogic = catanUserBusinessLogic;
-        }
-      
+        }     
+
+
         public async Task<bool> RegisterUser(UserProfile user)
         {
-            _logger?.LogInformation($"RegisterUser for user:  \"{user.Id}\"");
+            _logger?.LogDebug($"RegisterUser for user: {user.Id}");
             return await _catanUserBusinessLogic.RegisterPlayer(user);
         }
 
         public async Task UpdateUser(UserProfile user)
         {
-            _logger?.LogInformation($"UpdatePlayer for user:  \"{user.Id}\"");
+            _logger?.LogDebug($"UpdatePlayer for user: {user.Id}");
             await _catanUserBusinessLogic.UpdatePlayer(user);
         }
 
         public async Task<UserProfile> GetUser(string userName, string password)
         {
-            _logger?.LogInformation($"GetUser:  \"{userName}\"");
+            _logger?.LogDebug($"GetUser: {userName}");
             return await _catanUserBusinessLogic.GetUser(userName, password);
         }
 
         public async Task<List<UserProfile>> SearchPlayer(string userName)
         {
-            _logger?.LogInformation($"GetAvailableUsers for game admin:  \"{userName}\"");
+            _logger?.LogDebug($"GetAvailableUsers for game admin: {userName}");
             return await _catanUserBusinessLogic.SearchUser(userName);
         }
 
         public async Task<List<UserProfile>> GetUserActiveGames(string userName)
         {
-            _logger?.LogInformation($"GetUserActiveGames for  user:  \"{userName}\"");
+            _logger?.LogDebug($"GetUserActiveGames for user: {userName}");
             return await _catanUserBusinessLogic.SearchUser(userName);
         }
 
         public async Task UnRegisterUser(Guid userId)
         {
-            _logger?.LogInformation($"UnRegisterUser for user:  \"{userId}\"");
+            _logger?.LogDebug($"UnRegisterUser for user: {userId}");
             await _catanUserBusinessLogic.UnRegisterUser(userId);
         }
+
     }
 }
