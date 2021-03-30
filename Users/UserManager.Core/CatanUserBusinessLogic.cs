@@ -56,6 +56,7 @@ namespace CatanGameManager.Core
 
         public async Task ConsumeTopic()
         {
+            _logger?.LogDebug($"ConsumeTopic");
             var config = new ConsumerConfig
             {
                 BootstrapServers = "localhost:9092",
@@ -70,7 +71,8 @@ namespace CatanGameManager.Core
             {
                 consumer.Subscribe(topics);
                 var consumeResult = consumer.Consume(5000);
-
+                await _catanGamePersist.AddPlayerPoints(consumeResult.Message.Value, 50);
+                
             }
         }
     }

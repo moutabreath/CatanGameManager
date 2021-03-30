@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using CatanGameManager.Interfaces;
 using Microsoft.Extensions.Hosting;
@@ -19,14 +18,13 @@ namespace UserManager.API.Controllers
             _catanUserBusinessLogic = catanUserBusinessLogic;
         }
 
-
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            _logger.LogDebug("ExecuteAsync");
             while (!stoppingToken.IsCancellationRequested)
             {
-                await Task.Run(() => { _catanUserBusinessLogic.ConsumeTopic(); }, stoppingToken);
-            }
-         
+                await _catanUserBusinessLogic.ConsumeTopic().ConfigureAwait(false);
+            }         
         }
     }
 }

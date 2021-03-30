@@ -47,7 +47,7 @@ namespace CatanGamePersistence.MongoDB
             }
             FilterDefinition<CatanGame> filter =  Builders<CatanGame>.Filter.Where(catanGame => catanGame.Id == catanGame.Id 
                                                           && catanGame.ActivePlayers.Any(activePlayer => activePlayer.Id == playerToUpdate.Id));
-            UpdateDefinition<CatanGame> update = Builders<CatanGame>.Update.Set(x => x.ActivePlayers[-1], playerToUpdate);
+            UpdateDefinition<CatanGame> update = Builders<CatanGame>.Update.Set(catanGame => catanGame.ActivePlayers[-1], playerToUpdate);
             IMongoCollection<CatanGame> gameCollection = Database.GetCollection<CatanGame>(_documentName);
             await gameCollection.UpdateOneAsync(filter, update);
         }
@@ -183,8 +183,5 @@ namespace CatanGamePersistence.MongoDB
             }
             return catanGame.ActivePlayers.Sum(activePlayer => activePlayer.NumOfActiveKnights);
         }
-
-
-
     }
 }

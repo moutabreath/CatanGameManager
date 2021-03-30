@@ -35,7 +35,7 @@ namespace CatanGamePersistence.MongoDB
         public async Task UpdateUser(UserProfile playerProfile)
         {
             if (playerProfile.Id == Guid.Empty) playerProfile.Id = Guid.NewGuid();
-            _logger?.LogDebug($"UpdateUser: \"{playerProfile.Id}\" "); 
+            _logger?.LogDebug($"UpdateUser: {playerProfile.Id}"); 
             await UpdateEntity(playerProfile, 
                 Database.GetCollection<UserProfile>(_playerProfileDoc), 
                 Builders<UserProfile>.Filter.Where(x => x.Id == playerProfile.Id));
@@ -43,7 +43,7 @@ namespace CatanGamePersistence.MongoDB
 
         public async Task<UserProfile> GetUser(string userName, string password)
         {
-            _logger?.LogDebug($"GetUser: \"{userName}\" ");
+            _logger?.LogDebug($"GetUser: {userName}");
             IMongoCollection<UserProfile> playerCollection = Database.GetCollection<UserProfile>(_playerProfileDoc);
             IAsyncCursor<UserProfile> response = await playerCollection.FindAsync(playerProfile => playerProfile.Email == userName && playerProfile.Password == password);
             return response.FirstOrDefault();
@@ -51,9 +51,17 @@ namespace CatanGamePersistence.MongoDB
 
         public async Task UnRegisterUser(Guid userId)
         {
-            _logger?.LogDebug($"UnRegisterUser: \"{userId}\" ");
+            _logger?.LogDebug($"UnRegisterUser: {userId}");
             IMongoCollection<UserProfile> playerCollection = Database.GetCollection<UserProfile>(_playerProfileDoc);
             await playerCollection.DeleteOneAsync(playerProfile => playerProfile.Id == userId);
+        }
+
+        public async Task AddPlayerPoints(Guid userId, int points)
+        {
+            FilterDefinition<UserProfile> filter = Builders<UserProfile>.Filter.Where(userProfile => userProfile.Id == userId);
+            UpdateDefinition<UserProfile> update = Builders<UserProfile>.Update.Set(userProfile => userProfile.TotalPoints, points);
+            IMongoCollection<UserProfile> userCollection = Database.GetCollection<UserProfile>(_documentName);
+            await userCollection.UpdateOneAsync(filter, update);
         }
     }
 }
