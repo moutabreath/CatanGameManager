@@ -36,21 +36,21 @@ namespace CatanGameManager.API.Controllers
         [HttpGet]
         public async Task UpdateGame(CatanGame catanGame)
         {
-            _logger?.LogInformation($"UpdateGame for game: \"{catanGame.Id}\"");
+            _logger?.LogInformation($"UpdateGame for game: {catanGame.Id}");
             await _catanGameBusinessLogic.UpdateGame(catanGame);
         }
 
         [HttpGet]
         public async Task<CatanGame> GetGame(Guid catanGameId)
         {
-            _logger?.LogInformation($"GetGame for game: \"{catanGameId}\"");
+            _logger?.LogInformation($"GetGame for game: {catanGameId}");
             return await _catanGameBusinessLogic.GetGame(catanGameId);
         }
 
         [HttpGet]
         public async Task<IEnumerable<CatanGame>> GetUserActiveGames(Guid userId)
         {
-            _logger?.LogInformation($"GetUserActiveGames for user: \"{userId}\"");
+            _logger?.LogInformation($"GetUserActiveGames for user: {userId}");
             return await _catanGameBusinessLogic.GetUserActiveGames(userId);
         }
 
@@ -64,7 +64,7 @@ namespace CatanGameManager.API.Controllers
         [HttpPost]
         public async Task RemoveGame(CatanGame catanGame)
         {
-            _logger?.LogInformation($"RemoveGame for game: \"{catanGame.Id}\"");
+            _logger?.LogInformation($"RemoveGame for game: {catanGame.Id}");
             await _catanGameBusinessLogic.RemoveGame(catanGame);
         }
 

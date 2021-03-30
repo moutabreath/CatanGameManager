@@ -56,9 +56,9 @@ namespace CatanGamePersistence.MongoDB
             await playerCollection.DeleteOneAsync(playerProfile => playerProfile.Id == userId);
         }
 
-        public async Task AddPlayerPoints(Guid userId, int points)
+        public async Task AddPlayerPoints(string userId, int points)
         {
-            FilterDefinition<UserProfile> filter = Builders<UserProfile>.Filter.Where(userProfile => userProfile.Id == userId);
+            FilterDefinition<UserProfile> filter = Builders<UserProfile>.Filter.Where(userProfile => userProfile.Id.ToString() == userId);
             UpdateDefinition<UserProfile> update = Builders<UserProfile>.Update.Set(userProfile => userProfile.TotalPoints, points);
             IMongoCollection<UserProfile> userCollection = Database.GetCollection<UserProfile>(_documentName);
             await userCollection.UpdateOneAsync(filter, update);
