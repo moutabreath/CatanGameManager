@@ -8,5 +8,5 @@ sudo docker inspect −−format '{{ .NetworkSettings.IPAddress }}' 3e56b61f5b9d
 
 
 kubectl create namespace test
-kubectl -n test apply -f zk1.yml
-kubectl -n test apply -f kafka.yml
+kubectl -n test apply -f zk1.yaml
+kubectl -n test apply -f kafka.yaml

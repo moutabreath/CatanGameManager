@@ -12,6 +12,7 @@ namespace CatanGameManager.Interfaces
         Task<UserProfile> GetUser(string userName, string password);
         Task UnRegisterUser(Guid userId);
         Task<List<UserProfile>> SearchUser(string userName);
-        
+
+        Task ConsumeTopic();
     }
 }

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using CatanGameManager.CommonObjects.User;
 using CatanGameManager.Interfaces.PersistanceInterfaces;
+using Confluent.Kafka;
 
 namespace CatanGameManager.Core
 {
@@ -51,6 +52,27 @@ namespace CatanGameManager.Core
         {
             _logger?.LogDebug($"SearchUser: {userName}");
             throw new NotImplementedException();
-        } 
+        }
+
+        public async Task ConsumeTopic()
+        {
+            var config = new ConsumerConfig
+            {
+                BootstrapServers = "localhost:9092",
+                GroupId = "foo",
+                AutoOffsetReset = AutoOffsetReset.Earliest
+            };
+            IList<string> topics = new List<string>
+            {
+                "player-points"
+            };
+            using (var consumer = new ConsumerBuilder<Ignore, string>(config).Build())
+            {
+                consumer.Subscribe(topics);
+                var consumeResult = consumer.Consume(5000);
+
+            }
+        }
     }
+    
 }
