@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 namespace CatanGameManager.API.Controllers
 {
     [Produces("application/json")]
-    [Route("api/Account")]
+    [Route("[controller]/[action]")]
     public class AccountController : Controller
     {
         private readonly ICatanUserBusinessLogic _catanUserBusinessLogic;

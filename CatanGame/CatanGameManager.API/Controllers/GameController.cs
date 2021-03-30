@@ -10,18 +10,13 @@ using Microsoft.Extensions.Logging;
 
 namespace CatanGameManager.API.Controllers
 {
+    /// <summary>
+    /// The web interface includes most common game update options.
+    /// </summary>
     [Produces("application/json")]
-    [Route("api/CatanGame")]
+    [Route("[controller]/[action]")]
     public class GameController : Controller
     {
-        /// <summary>
-        /// The web interface includes most common game update options. All parameters are Guid for two reasons:
-        /// 1. Get the updated verrsion of the game from db.
-        /// 2. Ease of testing with postman.
-        /// 3. There is no need to get the full object in order to update it on server. The local client copy can be updated directly with the object refence.
-        /// </summary>
-
-
         private readonly ICatanGameBusinessLogic _catanGameBusinessLogic;
         private readonly ILogger<GameController> _logger;
 
