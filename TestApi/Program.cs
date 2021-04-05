@@ -22,6 +22,7 @@ namespace TestApi
                 }
                 catch (ProduceException<Null, string> ex)
                 {
+                    Console.WriteLine(ex);
                 }
             }
             Console.WriteLine("Hello World!");

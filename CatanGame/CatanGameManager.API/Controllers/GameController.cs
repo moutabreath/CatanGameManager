@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading.Tasks;
 using CatanGameManager.CommonObjects;
 using CatanGameManager.CommonObjects.Enums;
@@ -19,6 +20,7 @@ namespace CatanGameManager.API.Controllers
     {
         private readonly ICatanGameBusinessLogic _catanGameBusinessLogic;
         private readonly ILogger<GameController> _logger;
+        private static readonly HttpClient _sHttpCient = new HttpClient();// TODO: add authentication token to validate the user exists
 
         public GameController(ILogger<GameController> logger, ICatanGameBusinessLogic catanGameBusinessLogic)
         {
@@ -53,6 +55,7 @@ namespace CatanGameManager.API.Controllers
         public async Task AddPlayerToGame(CatanGame catanGame, Guid userId, string userName)
         {
             _logger?.LogInformation($"AddPlayerToGame for game: {catanGame.Id} and user: {userId} ");
+            // TODO: add authentication token to validate the user exists
             await _catanGameBusinessLogic.AddPlayerToGame(catanGame, userId, userName);
         }
 
