@@ -32,7 +32,7 @@ namespace CatanGameManager.Tests
             CatanManagerConfig config = new CatanManagerConfig
             {
                 MongoConnectionString = "mongodb://myAdmin:simplePassword@localhost/catanHelperTest?authSource=admin",
-                MongoCatanGameDbName = "CatanGameTest"
+                MongoDbName = "CatanGameTest"
             };            
             IOptions<CatanManagerConfig> someOptions = Options.Create(config);
             _catanPlayerBusinessLogic = new CatanUserBusinessLogic(null, new CatanUserMongoPersist(null, someOptions));

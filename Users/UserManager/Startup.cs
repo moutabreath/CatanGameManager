@@ -1,3 +1,4 @@
+using CatanGameManager.CommonObjects.Config;
 using CatanGameManager.Core;
 using CatanGameManager.Interfaces;
 using CatanGameManager.Interfaces.PersistanceInterfaces;
@@ -23,6 +24,8 @@ namespace UserManager
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<CatanManagerConfig>(Configuration.GetSection("MongoConfig"));
+
             services.AddScoped<ICatanUserBusinessLogic, CatanUserBusinessLogic>();
             services.AddScoped<ICatanUserPersist, CatanUserMongoPersist>();
             services.AddControllers();

@@ -22,7 +22,7 @@ namespace CatanGamePersistence.MongoDB
             _documentName = documentName;
             CatanManagerConfig configuration = options.Value;
             Client = new MongoClient(configuration.MongoConnectionString);
-            Database = Client.GetDatabase(configuration.MongoCatanGameDbName);
+            Database = Client.GetDatabase(configuration.MongoDatabaseName);
             MongoCollection = Database.GetCollection<T>(_documentName);
             InitializeClassMap();
         }
