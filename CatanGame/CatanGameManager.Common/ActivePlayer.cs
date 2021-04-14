@@ -6,8 +6,7 @@ namespace CatanGameManager.CommonObjects.User
 {
     public class ActivePlayer: Entity
     {
-        public string Name { get; set; }
-        public Guid UserId { get; set; }
+        public string UserName { get; set; }
         public int NumOfSettlements { get; set; }
         public int NumOfCities { get; set; }
         public int NumOfContinousRoads { get; set; }

@@ -37,27 +37,26 @@ namespace CatanGameManager.Core
             return await _catanGamePersist.GetGame(gameId);
         }
 
-        public async Task<IEnumerable<CatanGame>> GetUserActiveGames(Guid activePlayerId)
+        public async Task<IEnumerable<CatanGame>> GetUserActiveGames(string userName)
         {
-            _logger?.LogInformation($"GetUserActiveGames for game admin: {activePlayerId}");
-            return await _catanGamePersist.GetUserActiveGames(activePlayerId);
+            _logger?.LogInformation($"GetUserActiveGames for game admin: {userName}");
+            return await _catanGamePersist.GetUserActiveGames(userName);
         }
 
-        public async Task AddPlayerToGame(CatanGame catanGame, Guid userId, string userName)
+        public async Task AddPlayerToGame(CatanGame catanGame, string userName)
         {
-            _logger?.LogInformation($"AddPlayerToGame for catanGame: {catanGame.Id}, player: {userId}: {userName}");
+            _logger?.LogInformation($"AddPlayerToGame for catanGame: {catanGame.Id}, player: {userName}");
 
             ActivePlayer activePlayer = new ActivePlayer
             {
                 Id = Guid.NewGuid(),
-                UserId = userId,
                 InterChanageableVPs = new List<VPType.InterChanageableVP>(),
                 NumOfActiveKnights = 0,
                 NumOfCities = 0,
                 NumOfContinousRoads = 0,
                 NumOfSettlements = 0,
                 NumOfTotalKnights = 0,
-                Name = userName
+                UserName = userName
             };
 
             catanGame.ActivePlayers.Add(activePlayer);
@@ -118,7 +117,7 @@ namespace CatanGameManager.Core
                 {
                     try
                     {
-                        DeliveryResult<Null, string> directoryResult = await producer.ProduceAsync("player-points", new Message<Null, string> { Value = $"{activePlayer.UserId}" });
+                        DeliveryResult<Null, string> directoryResult = await producer.ProduceAsync("player-points", new Message<Null, string> { Value = $"{activePlayer.UserName}" });
                         _logger?.LogInformation($"Delivered '{directoryResult.Value}' to '{directoryResult.TopicPartitionOffset}'");
                     }
                     catch (ProduceException<Null, string> ex)

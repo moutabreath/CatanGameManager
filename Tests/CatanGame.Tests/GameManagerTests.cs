@@ -29,12 +29,12 @@ namespace CatanGameManager.Tests
         [TestInitialize]
         public async Task Init()
         {
-            CatanManagerConfig config = new CatanManagerConfig
+            GameManagerConfig config = new GameManagerConfig
             {
                 MongoConnectionString = "mongodb://myAdmin:simplePassword@localhost/catanHelperTest?authSource=admin",
-                MongoDbName = "CatanGameTest"
+                MongoDatabaseName = "CatanGameTest"
             };            
-            IOptions<CatanManagerConfig> someOptions = Options.Create(config);
+            IOptions<GameManagerConfig> someOptions = Options.Create(config);
             _catanPlayerBusinessLogic = new CatanUserBusinessLogic(null, new CatanUserMongoPersist(null, someOptions));
             _catanGameBusinessLogic = new CatanGameBusinessLogic(null, new CatanGameMongoPersist(null, someOptions));
 
@@ -46,7 +46,7 @@ namespace CatanGameManager.Tests
         private async Task<CatanGame> GetGame()
         {
             UserProfile playerProfile = await _catanPlayerBusinessLogic.GetUser(PlayerEmail1, Password);
-            IEnumerable<CatanGame> playerGames = await _catanGameBusinessLogic.GetUserActiveGames(playerProfile.Id);
+            IEnumerable<CatanGame> playerGames = await _catanGameBusinessLogic.GetUserActiveGames(playerProfile.UserName);
             return playerGames.FirstOrDefault();
         }
 
@@ -85,8 +85,8 @@ namespace CatanGameManager.Tests
                 Password = Password
             };
             await _catanPlayerBusinessLogic.UpdatePlayer(playerProfile2);
-            await _catanGameBusinessLogic.AddPlayerToGame(catanGame, playerProfile2.Id, playerProfile2.Email);
-            await _catanGameBusinessLogic.AddPlayerToGame(catanGame, playerProfile.Id, playerProfile.Email);
+            await _catanGameBusinessLogic.AddPlayerToGame(catanGame,playerProfile2.Email);
+            await _catanGameBusinessLogic.AddPlayerToGame(catanGame, playerProfile.Email);
         }
 
         [TestCleanup]
@@ -94,7 +94,7 @@ namespace CatanGameManager.Tests
         {
             UserProfile playerProfile = await _catanPlayerBusinessLogic.GetUser(PlayerEmail1, Password);
             if (playerProfile == null) return;
-            IEnumerable<CatanGame> playerGames = await _catanGameBusinessLogic.GetUserActiveGames(playerProfile.Id);
+            IEnumerable<CatanGame> playerGames = await _catanGameBusinessLogic.GetUserActiveGames(playerProfile.UserName);
             foreach (CatanGame playerGame in playerGames)
             {
                 await _catanGameBusinessLogic.RemoveGame(playerGame);
@@ -115,10 +115,10 @@ namespace CatanGameManager.Tests
         public async Task TestGetPlayerActiveGames()
         {
             UserProfile playerProfile = await _catanPlayerBusinessLogic.GetUser(PlayerEmail1, Password);
-            IEnumerable<CatanGame> playerGames = await _catanGameBusinessLogic.GetUserActiveGames(playerProfile.Id);
+            IEnumerable<CatanGame> playerGames = await _catanGameBusinessLogic.GetUserActiveGames(playerProfile.UserName);
             CatanGame theCatanGame = playerGames.FirstOrDefault();
             Assert.IsNotNull(theCatanGame);
-            Assert.IsTrue(theCatanGame.ActivePlayers.Select(activePlayer => activePlayer.UserId).Contains(playerProfile.Id));
+            Assert.IsTrue(theCatanGame.ActivePlayers.Select(activePlayer => activePlayer.UserName).Contains(playerProfile.UserName));
         }        
       
         [TestMethod]
@@ -161,11 +161,11 @@ namespace CatanGameManager.Tests
         public async Task TestDeactivateAllKnights()
         {
             UserProfile playerProfile = await _catanPlayerBusinessLogic.GetUser(PlayerEmail1, Password);
-            IEnumerable<CatanGame> playerGames = await _catanGameBusinessLogic.GetUserActiveGames(playerProfile.Id);
+            IEnumerable<CatanGame> playerGames = await _catanGameBusinessLogic.GetUserActiveGames(playerProfile.UserName);
             CatanGame theCatanGame = playerGames.FirstOrDefault();
             await _catanGameBusinessLogic.DeactivateAllKnights(theCatanGame.Id);
 
-            playerGames = await _catanGameBusinessLogic.GetUserActiveGames(playerProfile.Id);
+            playerGames = await _catanGameBusinessLogic.GetUserActiveGames(playerProfile.UserName);
             theCatanGame = playerGames.FirstOrDefault();
 
             foreach (ActivePlayer activePlayer in theCatanGame.ActivePlayers)

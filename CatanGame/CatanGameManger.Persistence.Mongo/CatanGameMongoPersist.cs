@@ -60,11 +60,11 @@ namespace CatanGamePersistence.MongoDB
             return catanGameCursor.First();
         }
 
-        public async Task<IEnumerable<CatanGame>> GetUserActiveGames(Guid userId)
+        public async Task<IEnumerable<CatanGame>> GetUserActiveGames(string userName)
         {
-            _logger?.LogDebug($"GetPlayerActiveGames for player: {userId}");
+            _logger?.LogDebug($"GetPlayerActiveGames for player: {userName}");
             IMongoCollection<CatanGame> collection = Database.GetCollection<CatanGame>(_documentName);
-            IAsyncCursor<CatanGame> playerGames = await collection.FindAsync(game => game.ActivePlayers.Any(activePlayer => activePlayer.UserId == userId));
+            IAsyncCursor<CatanGame> playerGames = await collection.FindAsync(game => game.ActivePlayers.Any(activePlayer => activePlayer.UserName == userName));
             return playerGames.ToList();
         }
 

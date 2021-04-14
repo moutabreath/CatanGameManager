@@ -48,10 +48,10 @@ namespace CatanGameManager.Core
              await _catanGamePersist.UnRegisterUser(userId);
         }
 
-        public Task<List<UserProfile>> SearchUser(string userName)
+        public async Task<List<UserProfile>> SearchUser(string userName)
         {
             _logger?.LogDebug($"SearchUser: {userName}");
-            throw new NotImplementedException();
+            return await _catanGamePersist.SearchUser(userName);
         }
 
         public async Task ConsumeTopic()

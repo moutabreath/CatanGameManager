@@ -35,8 +35,8 @@ namespace CatanGameManager.API.Controllers
 
         #region Game Update
 
-        [HttpGet]
-        public async Task UpdateGame(CatanGame catanGame)
+        [HttpPost]
+        public async Task UpdateGame([FromBody] CatanGame catanGame)
         {
             _logger?.LogInformation($"UpdateGame for game: {catanGame.Id}");
             await _catanGameBusinessLogic.UpdateGame(catanGame);
@@ -50,32 +50,32 @@ namespace CatanGameManager.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<CatanGame>> GetUserActiveGames(Guid userId)
+        public async Task<IEnumerable<CatanGame>> GetUserActiveGames(string userName)
         {
-            _logger?.LogInformation($"GetUserActiveGames for user: {userId}");
-            return await _catanGameBusinessLogic.GetUserActiveGames(userId);
+            _logger?.LogInformation($"GetUserActiveGames for user: {userName}");
+            return await _catanGameBusinessLogic.GetUserActiveGames(userName);
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddPlayerToGame(CatanGame catanGame, Guid userId, string userName)
+        public async Task<IActionResult> AddPlayerToGame(string userName, [FromBody] CatanGame catanGame)
         {
-            _logger?.LogInformation($"AddPlayerToGame for game: {catanGame.Id} and user: {userId} ");
+            _logger?.LogInformation($"AddPlayerToGame for game: {catanGame.Id} and user: {userName} ");
             // TODO: add authentication token to validate the user exists
             try
             {
-                HttpResponseMessage userResponse = await _sHttpCient.GetAsync($"{_usersEndpoint}" + $"api/ValidateUser?userId={userId}");
+                HttpResponseMessage userResponse = await _sHttpCient.GetAsync($"{_usersEndpoint}" + $"api/SearchPlayer?userName={userName}");
             }
             catch(Exception ex)
             {
-                _logger?.LogError($"AddPlayerToGame Error while reaching Players endpoint for userId {userId} and game {catanGame.Id}", ex);
+                _logger?.LogError($"AddPlayerToGame Error while try to reach 'Players' endpoint for userId {userName} and game {catanGame.Id}", ex);
                 return Problem(statusCode: 400, title: "Invalid user");
             }
-            await _catanGameBusinessLogic.AddPlayerToGame(catanGame, userId, userName);
+            await _catanGameBusinessLogic.AddPlayerToGame(catanGame, userName);
             return Ok();
         }
 
         [HttpPost]
-        public async Task RemoveGame(CatanGame catanGame)
+        public async Task RemoveGame([FromBody] CatanGame catanGame)
         {
             _logger?.LogInformation($"RemoveGame for game: {catanGame.Id}");
             await _catanGameBusinessLogic.RemoveGame(catanGame);
@@ -126,7 +126,7 @@ namespace CatanGameManager.API.Controllers
         }
 
         [HttpPost]
-        public async Task DeactivateAllKnights(Guid gameId)
+        public async Task DeactivateAllKnights([FromBody] Guid gameId)
         {
             _logger?.LogInformation($"DeactivateAllKnights for game: {gameId}");
             await _catanGameBusinessLogic.DeactivateAllKnights(gameId);

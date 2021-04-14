@@ -12,7 +12,7 @@ namespace CatanGameManager.Interfaces.PersistanceInterfaces
         Task UpdateGame(CatanGame catanGame);
         Task<CatanGame> GetGame(Guid gameId);
         Task RemoveGame(CatanGame catanGame);
-        Task<IEnumerable<CatanGame>> GetUserActiveGames(Guid playerId);
+        Task<IEnumerable<CatanGame>> GetUserActiveGames(string userName);
         
         Task UpdatePlayerInGame(CatanGame catanGame, ActivePlayer playerToUpdate);
 

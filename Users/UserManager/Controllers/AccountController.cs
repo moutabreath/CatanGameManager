@@ -23,21 +23,21 @@ namespace CatanGameManager.API.Controllers
         }     
 
         [HttpPost]
-        public async Task<bool> RegisterUser(UserProfile user)
+        public async Task<bool> RegisterUser([FromBody] UserProfile user)
         {
             _logger?.LogDebug($"RegisterUser for user: {user.Id}");
             return await _catanUserBusinessLogic.RegisterPlayer(user);
         }
 
         [HttpPost]
-        public async Task UpdateUser(UserProfile user)
+        public async Task UpdateUser([FromBody] UserProfile user)
         {
             _logger?.LogDebug($"UpdatePlayer for user: {user.Id}");
             await _catanUserBusinessLogic.UpdatePlayer(user);
         }
 
         [HttpPost]
-        public async Task<UserProfile> GetUser(GetUserRequest getUserRequest) 
+        public async Task<UserProfile> GetUser([FromBody] GetUserRequest getUserRequest) 
          { 
             _logger?.LogDebug($"GetUser: {getUserRequest.UserName}");
             return await _catanUserBusinessLogic.GetUser(getUserRequest.UserName, getUserRequest.Password);
@@ -50,25 +50,12 @@ namespace CatanGameManager.API.Controllers
             return await _catanUserBusinessLogic.SearchUser(userName);
         }
 
-        [HttpGet]
-        public async Task<List<UserProfile>> GetUserActiveGames(string userName)
-        {
-            _logger?.LogDebug($"GetUserActiveGames for user: {userName}");
-            return await _catanUserBusinessLogic.SearchUser(userName);
-        }
-
         [HttpPost]
-        public async Task UnRegisterUser(Guid userId)
+        public async Task UnRegisterUser([FromBody] Guid userId)
         {
             _logger?.LogDebug($"UnRegisterUser for user: {userId}");
             await _catanUserBusinessLogic.UnRegisterUser(userId);
         }
-
-        [HttpGet]
-        public async Task<bool> ValidateUser(Guid userId)
-        {
-            _logger?.LogDebug($"ValidateUser for user: {userId}");
-            return await _catanUserBusinessLogic.ValidateUser(userId);
-        }
+       
     }
 }

@@ -7,6 +7,9 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
+using System.Collections.Generic;
+using MongoDB.Bson;
+using System.Text.RegularExpressions;
 
 namespace CatanGamePersistence.MongoDB
 {
@@ -64,8 +67,17 @@ namespace CatanGamePersistence.MongoDB
         {
             _logger?.LogDebug($"GetUser: {userId}");
             IAsyncCursor<UserProfile> user = await MongoCollection.FindAsync(user => user.Id == userId);
-            return user.FirstOrDefault();
+            return user.FirstOrDefault();            
+        }
 
+        public async Task<List<UserProfile>> SearchUser(string userName)
+        {
+            var queryExpr = new BsonRegularExpression(new Regex(userName, RegexOptions.None));
+            var builder = Builders<UserProfile>.Filter;
+            FilterDefinition<UserProfile> filter = builder.Regex("UserName", queryExpr);
+            IAsyncCursor<UserProfile> filterResult = await MongoCollection.FindAsync<UserProfile>(filter);
+            List<UserProfile> users = await filterResult.ToListAsync();
+            return users;
         }
     }
 }
