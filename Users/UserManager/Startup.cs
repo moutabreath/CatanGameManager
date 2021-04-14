@@ -33,7 +33,7 @@ namespace UserManager
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "API WSVAP (WebSmartView)", Version = "v1" });
-                c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First()); //This line
+                c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
             });
         }
 
@@ -45,18 +45,17 @@ namespace UserManager
                 app.UseDeveloperExceptionPage();
 
                 app.UseSwagger();
-
+                //app.UseSwaggerUI(c => { c.SwaggerEndpoint("v1/swagger.json", "API name"); });
                 app.UseSwaggerUI(c =>
                 {
+
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
                     c.RoutePrefix = string.Empty;
                 });
             }
 
             app.UseHttpsRedirection();
-
             app.UseRouting();
-
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

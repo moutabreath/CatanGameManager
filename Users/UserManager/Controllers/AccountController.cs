@@ -5,6 +5,7 @@ using CatanGameManager.CommonObjects;
 using CatanGameManager.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using UserManager.API.Requests;
 
 namespace CatanGameManager.API.Controllers
 {
@@ -35,11 +36,11 @@ namespace CatanGameManager.API.Controllers
             await _catanUserBusinessLogic.UpdatePlayer(user);
         }
 
-        [HttpGet]
-        public async Task<UserProfile> GetUser(string userName, string password)
-        {
-            _logger?.LogDebug($"GetUser: {userName}");
-            return await _catanUserBusinessLogic.GetUser(userName, password);
+        [HttpPost]
+        public async Task<UserProfile> GetUser(GetUserRequest getUserRequest) 
+         { 
+            _logger?.LogDebug($"GetUser: {getUserRequest.UserName}");
+            return await _catanUserBusinessLogic.GetUser(getUserRequest.UserName, getUserRequest.Password);
         }
 
         [HttpGet]
@@ -63,6 +64,7 @@ namespace CatanGameManager.API.Controllers
             await _catanUserBusinessLogic.UnRegisterUser(userId);
         }
 
+        [HttpGet]
         public async Task<bool> ValidateUser(Guid userId)
         {
             _logger?.LogDebug($"ValidateUser for user: {userId}");
