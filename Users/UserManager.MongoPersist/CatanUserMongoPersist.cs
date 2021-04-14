@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using CatanGameManager.CommonObjects.Config;
-using CatanGameManager.CommonObjects.User;
+using CatanGameManager.CommonObjects;
 using CatanGameManager.Interfaces.PersistanceInterfaces;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -11,9 +11,7 @@ using MongoDB.Driver;
 namespace CatanGamePersistence.MongoDB
 {
     public class CatanUserMongoPersist: CatanEntityMongoPersist<UserProfile>, ICatanUserPersist
-    {
-        private readonly string _playerProfileDoc = "PlayerProfile";
-        
+    {       
 
         public CatanUserMongoPersist(ILogger<CatanUserMongoPersist> logger, IOptions<CatanManagerConfig> options): base(logger, options, "PlayerProfile")
         {   
@@ -36,32 +34,38 @@ namespace CatanGamePersistence.MongoDB
         {
             if (playerProfile.Id == Guid.Empty) playerProfile.Id = Guid.NewGuid();
             _logger?.LogDebug($"UpdateUser: {playerProfile.Id}"); 
-            await UpdateEntity(playerProfile, 
-                Database.GetCollection<UserProfile>(_playerProfileDoc), 
+            await UpdateEntity(playerProfile,
+                MongoCollection, 
                 Builders<UserProfile>.Filter.Where(x => x.Id == playerProfile.Id));
         }
 
         public async Task<UserProfile> GetUser(string userName, string password)
         {
             _logger?.LogDebug($"GetUser: {userName}");
-            IMongoCollection<UserProfile> playerCollection = Database.GetCollection<UserProfile>(_playerProfileDoc);
-            IAsyncCursor<UserProfile> response = await playerCollection.FindAsync(playerProfile => playerProfile.Email == userName && playerProfile.Password == password);
+            IAsyncCursor<UserProfile> response = await MongoCollection.FindAsync(playerProfile => playerProfile.Email == userName && playerProfile.Password == password);
             return response.FirstOrDefault();
         }
 
         public async Task UnRegisterUser(Guid userId)
         {
             _logger?.LogDebug($"UnRegisterUser: {userId}");
-            IMongoCollection<UserProfile> playerCollection = Database.GetCollection<UserProfile>(_playerProfileDoc);
-            await playerCollection.DeleteOneAsync(playerProfile => playerProfile.Id == userId);
+            await MongoCollection.DeleteOneAsync(playerProfile => playerProfile.Id == userId);
         }
 
         public async Task AddPlayerPoints(string userId, int points)
         {
+            _logger?.LogDebug($"UnReAddPlayerPointsgisterUser: {userId}, points: {points}");
             FilterDefinition<UserProfile> filter = Builders<UserProfile>.Filter.Where(userProfile => userProfile.Id.ToString() == userId);
             UpdateDefinition<UserProfile> update = Builders<UserProfile>.Update.Set(userProfile => userProfile.TotalPoints, points);
-            IMongoCollection<UserProfile> userCollection = Database.GetCollection<UserProfile>(_documentName);
-            await userCollection.UpdateOneAsync(filter, update);
+            await MongoCollection.UpdateOneAsync(filter, update);
+        }
+
+        public async Task<UserProfile> GetUser(Guid userId)
+        {
+            _logger?.LogDebug($"GetUser: {userId}");
+            IAsyncCursor<UserProfile> user = await MongoCollection.FindAsync(user => user.Id == userId);
+            return user.FirstOrDefault();
+
         }
     }
 }

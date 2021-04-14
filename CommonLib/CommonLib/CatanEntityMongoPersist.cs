@@ -37,7 +37,7 @@ namespace CatanGamePersistence.MongoDB
             }
             catch(Exception ex)
             {
-                _logger.LogError($"UpdateEntity Error when updating entity {entity.Id}, filter {filter.ToString()}", ex);
+                _logger.LogError($"UpdateEntity Error when updating entity {entity.Id}, filter {filter}", ex);
             }
         }
     }

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CatanGameManager.CommonObjects.User
+namespace CatanGameManager.CommonObjects
 {
     public class UserProfile : Entity
     {

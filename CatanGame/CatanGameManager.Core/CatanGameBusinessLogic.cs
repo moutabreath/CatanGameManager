@@ -9,8 +9,6 @@ using CatanGameManager.CommonObjects.User;
 using CatanGameManager.CommonObjects.Enums;
 using System.Linq;
 using Confluent.Kafka;
-using System.Net;
-using static Confluent.Kafka.ConfigPropertyNames;
 
 namespace CatanGameManager.Core
 {

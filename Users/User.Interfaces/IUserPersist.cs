@@ -1,6 +1,6 @@
-﻿using System;
+﻿using CatanGameManager.CommonObjects;
+using System;
 using System.Threading.Tasks;
-using CatanGameManager.CommonObjects.User;
 
 namespace CatanGameManager.Interfaces.PersistanceInterfaces
 {
@@ -11,5 +11,7 @@ namespace CatanGameManager.Interfaces.PersistanceInterfaces
         Task UnRegisterUser(Guid userId);
 
         Task AddPlayerPoints(string userId, int points);
+
+        Task<UserProfile> GetUser(Guid userId);
     }
 }

@@ -3,9 +3,9 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using CatanGameManager.CommonObjects.User;
 using CatanGameManager.Interfaces.PersistanceInterfaces;
 using Confluent.Kafka;
+using CatanGameManager.CommonObjects;
 
 namespace CatanGameManager.Core
 {
@@ -74,6 +74,13 @@ namespace CatanGameManager.Core
                 await _catanGamePersist.AddPlayerPoints(consumeResult.Message.Value, 50);
                 
             }
+        }
+
+        public async Task<bool> ValidateUser(Guid userId)
+        {
+            _logger?.LogDebug($"ValidateUser: {userId}");
+            UserProfile userProfile =  await _catanGamePersist.GetUser(userId);
+            return userProfile != null;
         }
     }
     

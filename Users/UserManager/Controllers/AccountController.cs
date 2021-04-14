@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using CatanGameManager.CommonObjects.User;
+using CatanGameManager.CommonObjects;
 using CatanGameManager.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -63,5 +63,10 @@ namespace CatanGameManager.API.Controllers
             await _catanUserBusinessLogic.UnRegisterUser(userId);
         }
 
+        public async Task<bool> ValidateUser(Guid userId)
+        {
+            _logger?.LogDebug($"ValidateUser for user: {userId}");
+            return await _catanUserBusinessLogic.ValidateUser(userId);
+        }
     }
 }

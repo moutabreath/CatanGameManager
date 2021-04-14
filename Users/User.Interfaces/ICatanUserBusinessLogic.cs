@@ -1,7 +1,7 @@
-﻿using System;
+﻿using CatanGameManager.CommonObjects;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using CatanGameManager.CommonObjects.User;
 
 namespace CatanGameManager.Interfaces
 {
@@ -14,5 +14,6 @@ namespace CatanGameManager.Interfaces
         Task<List<UserProfile>> SearchUser(string userName);
 
         Task ConsumeTopic();
+        Task<bool> ValidateUser(Guid userId);
     }
 }

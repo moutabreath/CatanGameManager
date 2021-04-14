@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using CatanGameManager.CommonObjects;
+using CatanGameManager.CommonObjects.Config;
 using CatanGameManager.CommonObjects.Enums;
 using CatanGameManager.CommonObjects.User;
 using CatanGameManager.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace CatanGameManager.API.Controllers
 {
@@ -20,12 +22,15 @@ namespace CatanGameManager.API.Controllers
     {
         private readonly ICatanGameBusinessLogic _catanGameBusinessLogic;
         private readonly ILogger<GameController> _logger;
+        
         private static readonly HttpClient _sHttpCient = new HttpClient();// TODO: add authentication token to validate the user exists
+        private string _usersEndpoint;
 
-        public GameController(ILogger<GameController> logger, ICatanGameBusinessLogic catanGameBusinessLogic)
+        public GameController(ILogger<GameController> logger, IOptions<GameManagerConfig> options, ICatanGameBusinessLogic catanGameBusinessLogic)
         {
             _catanGameBusinessLogic = catanGameBusinessLogic;
             _logger = logger;
+            _usersEndpoint = options.Value.UsersEndpoint;
         }
 
         #region Game Update
@@ -52,11 +57,21 @@ namespace CatanGameManager.API.Controllers
         }
 
         [HttpPost]
-        public async Task AddPlayerToGame(CatanGame catanGame, Guid userId, string userName)
+        public async Task<IActionResult> AddPlayerToGame(CatanGame catanGame, Guid userId, string userName)
         {
             _logger?.LogInformation($"AddPlayerToGame for game: {catanGame.Id} and user: {userId} ");
             // TODO: add authentication token to validate the user exists
+            try
+            {
+                HttpResponseMessage userResponse = await _sHttpCient.GetAsync($"{_usersEndpoint}" + $"api/ValidateUser?userId={userId}");
+            }
+            catch(Exception ex)
+            {
+                _logger?.LogError($"AddPlayerToGame Error while reaching Players endpoint for userId {userId} and game {catanGame.Id}", ex);
+                return Problem(statusCode: 400, title: "Invalid user");
+            }
             await _catanGameBusinessLogic.AddPlayerToGame(catanGame, userId, userName);
+            return Ok();
         }
 
         [HttpPost]
