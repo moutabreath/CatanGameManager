@@ -8,9 +8,4 @@ sudo docker inspect −−format '{{ .NetworkSettings.IPAddress }}' 3e56b61f5b9d
 
 
 kubectl create namespace test
-kubectl -n test apply -f zk1.yaml
 kubectl -n test apply -f kafka.yaml
-kubectl -n test apply -f simpleMongo.yaml
-
-
-kubectl apply -f https://www.google.com/url?q=https://raw.githubusercontent.com/mongodb/mongodb-kubernetes-operator/master/config/crd/bases/mongodbcommunity.mongodb.com_mongodbcommunity.yaml&sa=D&source=editors&ust=1614803641658000&usg=AOvVaw1jruVfcsFrEJK__01lkH-G
