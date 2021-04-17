@@ -16,6 +16,7 @@ namespace CatanGameManager.API.Controllers
     /// The web interface includes most common game update options.
     /// </summary>
     [Produces("application/json")]
+    [Route("[controller]/[action]")]
     public class GameController : Controller
     {
         private readonly ICatanGameBusinessLogic _catanGameBusinessLogic;
