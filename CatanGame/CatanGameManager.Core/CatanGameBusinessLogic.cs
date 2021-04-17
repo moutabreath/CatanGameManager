@@ -28,6 +28,14 @@ namespace CatanGameManager.Core
         public async Task UpdateGame(CatanGame catanGame)
         {
             _logger?.LogInformation($"UpdateGame for game: {catanGame.Id}");
+            if (catanGame.ActivePlayers == null)
+            {
+                catanGame.ActivePlayers = new List<ActivePlayer>();
+            }
+            if (catanGame.RecentDiceRolls == null)
+            {
+                catanGame.RecentDiceRolls = new List<Tuple<int, int>>();
+            }
             await _catanGamePersist.UpdateGame(catanGame);
         }
 

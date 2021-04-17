@@ -43,7 +43,7 @@ namespace UserManager
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
             string path = Directory.GetCurrentDirectory();
-            loggerFactory.AddFile($"{path}\\Logs\\Log.txt");
+            loggerFactory.AddFile($"{path}\\Logs\\User.log");
 
             if (env.IsDevelopment())
             {
