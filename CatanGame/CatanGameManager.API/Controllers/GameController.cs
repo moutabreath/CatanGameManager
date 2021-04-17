@@ -62,7 +62,12 @@ namespace CatanGameManager.API.Controllers
             // TODO: add authentication token when validating user exists
             try
             {
-                HttpResponseMessage userResponse = await _sHttpCient.GetAsync($"{_usersEndpoint}" + $"api/SearchPlayer?userName={addPlayerToGameRequest.UserName}");
+                HttpResponseMessage userResponse = await _sHttpCient.GetAsync($"{_usersEndpoint}" + $"account/SearchPlayer?userName={addPlayerToGameRequest.UserName}");
+                if (!userResponse.IsSuccessStatusCode)
+                {                 
+                    _logger?.LogError($"AddPlayerToGame Unexpected response from 'Players' endpoint. User: {addPlayerToGameRequest.UserName}. Game: {addPlayerToGameRequest.CatanGame.Id}");
+                    return StatusCode(500);
+                }
             }
             catch(Exception ex)
             {
