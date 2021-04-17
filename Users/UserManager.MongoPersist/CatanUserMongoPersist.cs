@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using CatanGameManager.CommonObjects.Config;
 using CatanGameManager.CommonObjects;
 using CatanGameManager.Interfaces.PersistanceInterfaces;
 using Microsoft.Extensions.Logging;
@@ -10,13 +9,14 @@ using MongoDB.Driver;
 using System.Collections.Generic;
 using MongoDB.Bson;
 using System.Text.RegularExpressions;
+using CommonLib.Config;
 
 namespace CatanGamePersistence.MongoDB
 {
     public class CatanUserMongoPersist: CatanEntityMongoPersist<UserProfile>, ICatanUserPersist
     {       
 
-        public CatanUserMongoPersist(ILogger<CatanUserMongoPersist> logger, IOptions<CatanManagerConfig> options): base(logger, options, "PlayerProfile")
+        public CatanUserMongoPersist(ILogger<CatanUserMongoPersist> logger, IOptions<ApplicationConfig> options): base(logger, options, "PlayerProfile")
         {   
         }
 

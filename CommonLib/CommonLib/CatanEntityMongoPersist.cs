@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using CatanGameManager.CommonObjects;
-using CatanGameManager.CommonObjects.Config;
+using CommonLib.Config;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
@@ -16,13 +16,13 @@ namespace CatanGamePersistence.MongoDB
         protected IMongoDatabase Database { get; set; }
         protected IMongoCollection<T> MongoCollection { get; set; }
 
-        public CatanEntityMongoPersist(ILogger<CatanEntityMongoPersist<T>> logger, IOptions<CatanManagerConfig> options, string documentName)
+        public CatanEntityMongoPersist(ILogger<CatanEntityMongoPersist<T>> logger, IOptions<ApplicationConfig> options, string documentName)
         {
             _logger = logger;
             _documentName = documentName;
-            CatanManagerConfig configuration = options.Value;
-            Client = new MongoClient(configuration.MongoConnectionString);
-            Database = Client.GetDatabase(configuration.MongoDatabaseName);
+            ApplicationConfig configuration = options.Value;
+            Client = new MongoClient(configuration.MongoDbConfig .MongoConnectionString);
+            Database = Client.GetDatabase(configuration.MongoDbConfig .MongoDatabaseName);
             MongoCollection = Database.GetCollection<T>(_documentName);
             InitializeClassMap();
         }

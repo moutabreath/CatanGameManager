@@ -1,8 +1,8 @@
-﻿using CatanGameManager.CommonObjects.Config;
+﻿using CommonLib.Config;
 
 namespace CatanGameManager.CommonObjects.Config
 {
-    public class GameManagerConfig : CatanManagerConfig
+    public class GameManagerConfig : ApplicationConfig
     {
         public string UsersEndpoint { get; set; }
     }

@@ -11,6 +11,7 @@ using CatanGameManager.Interfaces;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using CatanGamePersistence.MongoDB;
+using CommonLib.Config;
 
 namespace CatanGameManager.Tests
 {
@@ -31,8 +32,11 @@ namespace CatanGameManager.Tests
         {
             GameManagerConfig config = new GameManagerConfig
             {
-                MongoConnectionString = "mongodb://myAdmin:simplePassword@localhost/catanHelperTest?authSource=admin",
-                MongoDatabaseName = "CatanGameTest"
+               MongoDbConfig =  new MongoDbConfig
+               {
+                    MongoConnectionString = "mongodb://myAdmin:simplePassword@localhost/catanHelperTest?authSource=admin",
+                    MongoDatabaseName = "CatanGameTest"
+                }
             };            
             IOptions<GameManagerConfig> someOptions = Options.Create(config);
             _catanPlayerBusinessLogic = new CatanUserBusinessLogic(null, new CatanUserMongoPersist(null, someOptions));
