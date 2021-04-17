@@ -1,6 +1,0 @@
-2021-04-14T19:14:10.3360763+03:00  [INF] Application started. Press Ctrl+C to shut down. (dcaefe54)
-2021-04-14T19:14:10.3850683+03:00  [INF] Hosting environment: "Development" (c3307c92)
-2021-04-14T19:14:10.3902326+03:00  [INF] Content root path: "C:\Work\Projects\CatanGameHelper\Users\UserManager" (b5d60022)
-2021-04-14T19:32:07.9156511+03:00  [INF] Application started. Press Ctrl+C to shut down. (dcaefe54)
-2021-04-14T19:32:07.9703511+03:00  [INF] Hosting environment: "Development" (c3307c92)
-2021-04-14T19:32:07.9745785+03:00  [INF] Content root path: "C:\Work\Projects\CatanGameHelper\Users\UserManager" (b5d60022)

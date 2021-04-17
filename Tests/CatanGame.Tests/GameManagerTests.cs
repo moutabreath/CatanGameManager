@@ -30,15 +30,13 @@ namespace CatanGameManager.Tests
         [TestInitialize]
         public async Task Init()
         {
-            GameManagerConfig config = new GameManagerConfig
+            MongoConfig config = new MongoConfig
             {
-               MongoDbConfig =  new MongoDbConfig
-               {
                     MongoConnectionString = "mongodb://myAdmin:simplePassword@localhost/catanHelperTest?authSource=admin",
                     MongoDatabaseName = "CatanGameTest"
-                }
+                
             };            
-            IOptions<GameManagerConfig> someOptions = Options.Create(config);
+            IOptions<MongoConfig> someOptions = Options.Create(config);
             _catanPlayerBusinessLogic = new CatanUserBusinessLogic(null, new CatanUserMongoPersist(null, someOptions));
             _catanGameBusinessLogic = new CatanGameBusinessLogic(null, new CatanGameMongoPersist(null, someOptions));
 

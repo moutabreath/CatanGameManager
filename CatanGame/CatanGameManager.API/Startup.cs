@@ -27,7 +27,8 @@ namespace CatanGameManager.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<ApplicationConfig>(Configuration.GetSection("ApplicationConfig"));
+            services.Configure<MongoConfig>(Configuration.GetSection("MongoConfig"));
+            services.Configure<GameManagerConfig>(Configuration.GetSection("GameManagerConfig"));
 
             services.AddScoped<ICatanGameBusinessLogic, CatanGameBusinessLogic>();
             services.AddScoped<ICatanGamePersist, CatanGameMongoPersist>();

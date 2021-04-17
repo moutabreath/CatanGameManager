@@ -16,13 +16,13 @@ namespace CatanGamePersistence.MongoDB
         protected IMongoDatabase Database { get; set; }
         protected IMongoCollection<T> MongoCollection { get; set; }
 
-        public CatanEntityMongoPersist(ILogger<CatanEntityMongoPersist<T>> logger, IOptions<ApplicationConfig> options, string documentName)
+        public CatanEntityMongoPersist(ILogger<CatanEntityMongoPersist<T>> logger, IOptions<MongoConfig> options, string documentName)
         {
             _logger = logger;
             _documentName = documentName;
-            ApplicationConfig configuration = options.Value;
-            Client = new MongoClient(configuration.MongoDbConfig .MongoConnectionString);
-            Database = Client.GetDatabase(configuration.MongoDbConfig .MongoDatabaseName);
+            MongoConfig configuration = options.Value;
+            Client = new MongoClient(configuration.MongoConnectionString);
+            Database = Client.GetDatabase(configuration.MongoDatabaseName);
             MongoCollection = Database.GetCollection<T>(_documentName);
             InitializeClassMap();
         }

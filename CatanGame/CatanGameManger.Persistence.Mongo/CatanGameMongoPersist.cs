@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using CatanGameManager.CommonObjects.Config;
 using CatanGameManager.CommonObjects;
 using CatanGameManager.CommonObjects.Enums;
 using CatanGameManager.CommonObjects.User;
 using CatanGameManager.Interfaces.PersistanceInterfaces;
+using CommonLib.Config;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson.Serialization;
@@ -17,7 +17,7 @@ namespace CatanGamePersistence.MongoDB
 {
     public class CatanGameMongoPersist : CatanEntityMongoPersist<CatanGame>, ICatanGamePersist
     {
-        public CatanGameMongoPersist(ILogger<CatanGameMongoPersist> logger, IOptions<GameManagerConfig> options) : base(logger, options, "CatanGame")
+        public CatanGameMongoPersist(ILogger<CatanGameMongoPersist> logger, IOptions<MongoConfig> options) : base(logger, options, "CatanGame")
         {
         }
 

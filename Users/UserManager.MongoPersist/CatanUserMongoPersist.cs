@@ -16,7 +16,7 @@ namespace CatanGamePersistence.MongoDB
     public class CatanUserMongoPersist: CatanEntityMongoPersist<UserProfile>, ICatanUserPersist
     {       
 
-        public CatanUserMongoPersist(ILogger<CatanUserMongoPersist> logger, IOptions<ApplicationConfig> options): base(logger, options, "PlayerProfile")
+        public CatanUserMongoPersist(ILogger<CatanUserMongoPersist> logger, IOptions<MongoConfig> options): base(logger, options, "PlayerProfile")
         {   
         }
 
