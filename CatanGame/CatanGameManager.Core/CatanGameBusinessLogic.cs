@@ -27,7 +27,7 @@ namespace CatanGameManager.Core
 
         public async Task UpdateGame(CatanGame catanGame)
         {
-            _logger?.LogInformation($"UpdateGame for game: {catanGame.Id}");
+            _logger?.LogDebug($"UpdateGame for game: {catanGame.Id}");
             if (catanGame.ActivePlayers == null)
             {
                 catanGame.ActivePlayers = new List<ActivePlayer>();
@@ -41,19 +41,19 @@ namespace CatanGameManager.Core
 
         public async Task<CatanGame> GetGame(Guid gameId)
         {
-            _logger?.LogInformation($"GetGame for catanGame: {gameId}");
+            _logger?.LogDebug($"GetGame for catanGame: {gameId}");
             return await _catanGamePersist.GetGame(gameId);
         }
 
         public async Task<IEnumerable<CatanGame>> GetUserActiveGames(string userName)
         {
-            _logger?.LogInformation($"GetUserActiveGames for game admin: {userName}");
+            _logger?.LogDebug($"GetUserActiveGames for game admin: {userName}");
             return await _catanGamePersist.GetUserActiveGames(userName);
         }
 
         public async Task AddPlayerToGame(CatanGame catanGame, string userName)
         {
-            _logger?.LogInformation($"AddPlayerToGame for catanGame: {catanGame.Id}, player: {userName}");
+            _logger?.LogDebug($"AddPlayerToGame for catanGame: {catanGame.Id}, player: {userName}");
 
             ActivePlayer activePlayer = new ActivePlayer
             {
@@ -72,13 +72,13 @@ namespace CatanGameManager.Core
         }
         public async Task UpdatePlayerInGame(CatanGame catanGame, ActivePlayer playerToUpdate)
         {
-            _logger?.LogInformation($"UpdatePlayerInGame for catanGame: {catanGame.Id}, player to update: {playerToUpdate.Id}");
+            _logger?.LogDebug($"UpdatePlayerInGame for catanGame: {catanGame.Id}, player to update: {playerToUpdate.Id}");
             await _catanGamePersist.UpdatePlayerInGame(catanGame, playerToUpdate);
         }
 
         public async Task RemoveGame(CatanGame catanGame)
         {
-            _logger?.LogInformation($"RemoveGame for catanGame: {catanGame.Id}");
+            _logger?.LogDebug($"RemoveGame for catanGame: {catanGame.Id}");
             await _catanGamePersist.RemoveGame(catanGame);
         }
 
@@ -139,7 +139,7 @@ namespace CatanGameManager.Core
 
         public async Task AddPlayerVictoryPoint(CatanGame catanGame, ActivePlayer activePlayer, VPType updateType)
         {
-            _logger?.LogInformation($"AddPlayerVictoryPoint for catanGame: {catanGame.Id}, player: {activePlayer.Id}, updateType: {updateType}");
+            _logger?.LogDebug($"AddPlayerVictoryPoint for catanGame: {catanGame.Id}, player: {activePlayer.Id}, updateType: {updateType}");
             if (updateType.TypeToUpdate == VPType.UpdateType.Interchangeable)
             {
                 IEnumerable<ActivePlayer> activePlayers = catanGame?.ActivePlayers.Where(player => player.InterChanageableVPs.Contains(updateType.TypeOfInterchangeable));
@@ -160,7 +160,7 @@ namespace CatanGameManager.Core
 
         private async Task AddNonInterchaneableVPs(CatanGame catanGame, ActivePlayer activePlayer, VPType updateType)
         {
-            _logger?.LogInformation($"AddVPsToSelectedPlayer game: {catanGame.Id}, player {activePlayer.Id}, updateType: {updateType.TypeToUpdate}");            
+            _logger?.LogDebug($"AddVPsToSelectedPlayer game: {catanGame.Id}, player {activePlayer.Id}, updateType: {updateType.TypeToUpdate}");            
             switch (updateType.TypeToUpdate)
             {
                 //TODO: Update remaining settlements / cities
@@ -191,31 +191,31 @@ namespace CatanGameManager.Core
 
         public async Task<int> GetGameTotalActiveKnights(Guid catanGameId)
         {
-            _logger?.LogInformation($"GetTotalActiveKnights for catanGame: {catanGameId}");
+            _logger?.LogDebug($"GetTotalActiveKnights for catanGame: {catanGameId}");
             return await _catanGamePersist.GetGameTotalActiveKnights(catanGameId);
         }
 
         public async Task AddPlayerKnight(Guid catanGameId, Guid activePlayerId, KnightRank knightRank)
         {
-            _logger?.LogInformation($"AddPlayerKnight for catanGame: {catanGameId}, player: {activePlayerId}, knightRank: {knightRank}");
+            _logger?.LogDebug($"AddPlayerKnight for catanGame: {catanGameId}, player: {activePlayerId}, knightRank: {knightRank}");
             await _catanGamePersist.AddPlayerKnight(catanGameId, activePlayerId, knightRank);
         }
 
         public async Task AdvanceBarbarians(Guid catanGameId)
         {
-            _logger?.LogInformation($"AdvanceBarbarians for catanGame: {catanGameId}");
+            _logger?.LogDebug($"AdvanceBarbarians for catanGame: {catanGameId}");
             await _catanGamePersist.AdvanceBarbarians(catanGameId);
         }
 
         public async Task ActivateAllKnightsForPlayer(Guid catanGameId, Guid activePlayerId)
         {
-            _logger?.LogInformation($"ActivateAllKnightsForPlayer for catanGame: {catanGameId}, player: {activePlayerId}");
+            _logger?.LogDebug($"ActivateAllKnightsForPlayer for catanGame: {catanGameId}, player: {activePlayerId}");
             await _catanGamePersist.ActivateAllKnightsForPlayer(catanGameId, activePlayerId);
         }
 
         public async Task DeactivateAllKnights(Guid catanGameId)
         {
-            _logger?.LogInformation($"DeactivateAllKnights for catanGame: {catanGameId}");
+            _logger?.LogDebug($"DeactivateAllKnights for catanGame: {catanGameId}");
             await _catanGamePersist.DeactivateAllKnights(catanGameId);
         }
       

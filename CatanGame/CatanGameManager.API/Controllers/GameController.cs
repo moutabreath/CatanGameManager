@@ -38,28 +38,28 @@ namespace CatanGameManager.API.Controllers
         [HttpPost]
         public async Task UpdateGame([FromBody] CatanGame catanGame)
         {
-            _logger?.LogInformation($"UpdateGame for game: {catanGame.Id}");
+            _logger?.LogDebug($"UpdateGame for game: {catanGame.Id}");
             await _catanGameBusinessLogic.UpdateGame(catanGame);
         }
 
         [HttpGet]
         public async Task<CatanGame> GetGame(Guid catanGameId)
         {
-            _logger?.LogInformation($"GetGame for game: {catanGameId}");
+            _logger?.LogDebug($"GetGame for game: {catanGameId}");
             return await _catanGameBusinessLogic.GetGame(catanGameId);
         }
 
         [HttpGet]
         public async Task<IEnumerable<CatanGame>> GetUserActiveGames(string userName)
         {
-            _logger?.LogInformation($"GetUserActiveGames for user: {userName}");
+            _logger?.LogDebug($"GetUserActiveGames for user: {userName}");
             return await _catanGameBusinessLogic.GetUserActiveGames(userName);
         }
 
         [HttpPost]
         public async Task<IActionResult> AddPlayerToGame(string userName, [FromBody] CatanGame catanGame)
         {
-            _logger?.LogInformation($"AddPlayerToGame for game: {catanGame.Id} and user: {userName} ");
+            _logger?.LogDebug($"AddPlayerToGame for game: {catanGame.Id} and user: {userName} ");
             // TODO: add authentication token to validate the user exists
             try
             {
@@ -77,7 +77,7 @@ namespace CatanGameManager.API.Controllers
         [HttpPost]
         public async Task RemoveGame([FromBody] CatanGame catanGame)
         {
-            _logger?.LogInformation($"RemoveGame for game: {catanGame.Id}");
+            _logger?.LogDebug($"RemoveGame for game: {catanGame.Id}");
             await _catanGameBusinessLogic.RemoveGame(catanGame);
         }
 
@@ -89,7 +89,7 @@ namespace CatanGameManager.API.Controllers
         [HttpPost]
         public async Task AddPlayerVictoryPoint(CatanGame game, ActivePlayer activePlayer, VPType updateType)
         {
-            _logger?.LogInformation($"AddPlayerVictoryPoint for game: {game.Id}, activePlayer {activePlayer.Id} and updateType {updateType}");
+            _logger?.LogDebug($"AddPlayerVictoryPoint for game: {game.Id}, activePlayer {activePlayer.Id} and updateType {updateType}");
             await _catanGameBusinessLogic.AddPlayerVictoryPoint(game, activePlayer, updateType);
         }
 
@@ -100,35 +100,35 @@ namespace CatanGameManager.API.Controllers
         [HttpGet]
         public async Task<int> GetGameTotalActiveKnights(Guid gameId)
         {
-            _logger?.LogInformation($"GetGameTotalActiveKnights for game: {gameId}");
+            _logger?.LogDebug($"GetGameTotalActiveKnights for game: {gameId}");
             return await _catanGameBusinessLogic.GetGameTotalActiveKnights(gameId);
         }
 
         [HttpPost]
         public async Task AddPlayerKnight(Guid gameId, Guid activePlayerId, KnightRank knightRank)
         {
-            _logger?.LogInformation($"GetTotalActiveKnights for game: {activePlayerId}");
+            _logger?.LogDebug($"GetTotalActiveKnights for game: {activePlayerId}");
             await _catanGameBusinessLogic.AddPlayerKnight(gameId, activePlayerId, knightRank);
         }
 
         [HttpPost]
         public async Task AdvanceBarbarians(Guid gameId)
         {
-            _logger?.LogInformation($"AdvanceBarbarians for user: {gameId}");
+            _logger?.LogDebug($"AdvanceBarbarians for user: {gameId}");
             await _catanGameBusinessLogic.AdvanceBarbarians(gameId);
         }
 
         [HttpPost]
         public async Task ActivateAllKnightsForPlayer(Guid gameId, Guid playerId)
         {
-            _logger?.LogInformation($"ActiveAllKnightsForPlayer for game: {gameId} and player: {playerId}");
+            _logger?.LogDebug($"ActiveAllKnightsForPlayer for game: {gameId} and player: {playerId}");
             await _catanGameBusinessLogic.ActivateAllKnightsForPlayer(gameId, playerId);
         }
 
         [HttpPost]
         public async Task DeactivateAllKnights([FromBody] Guid gameId)
         {
-            _logger?.LogInformation($"DeactivateAllKnights for game: {gameId}");
+            _logger?.LogDebug($"DeactivateAllKnights for game: {gameId}");
             await _catanGameBusinessLogic.DeactivateAllKnights(gameId);
         }
 
