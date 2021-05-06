@@ -5,6 +5,7 @@
     <UserSecretsId>d7e62fef-35ee-4b52-b89c-36ed33e0092f</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..</DockerfileContext>
+    <DockerComposeProjectPath>..\..\docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,6 +20,10 @@
     <ProjectReference Include="..\User.Interfaces\UserManager.Interfaces.csproj" />
     <ProjectReference Include="..\UserManager.Core\UserManager.Core.csproj" />
     <ProjectReference Include="..\UserManager.MongoPersist\UserManager.MongoPersist.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Logs\" />
   </ItemGroup>
 
 

@@ -5,6 +5,7 @@
     <UserSecretsId>6bf0934d-1b01-42e0-90e9-42cae64d0fe2</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..</DockerfileContext>
+    <DockerComposeProjectPath>..\..\docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,6 +19,10 @@
     <ProjectReference Include="..\CatanGame.Interfaces\CatanGameManager.Interfaces.csproj" />
     <ProjectReference Include="..\CatanGameManager.Core\CatanGameManager.Core.csproj" />
     <ProjectReference Include="..\CatanGameManger.Persistence.Mongo\CatanGameManger.Persistence.Mongo.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Logs\" />
   </ItemGroup>
 
 
