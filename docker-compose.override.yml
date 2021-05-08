@@ -1,6 +1,10 @@
 version: '3.4'
 
 services:
+  mongo:
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
   usermanager.api:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
