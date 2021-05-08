@@ -10,3 +10,4 @@
 *\obj
 
 *.log
+/https/aspnetapp.pfx

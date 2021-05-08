@@ -20,13 +20,16 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
   usermanager.api:
     # image: ${DOCKER_REGISTRY-}usermanagerapi
-    build:
+    depends_on:
+        - kafka
+    build:      
       context: .
       dockerfile: Users/UserManager/Dockerfile
-
   catangamemanager.api:
     # image: ${DOCKER_REGISTRY-}catangamemanagerapi
-    build:
+    depends_on:
+        - usermanager.api
+    build:      
       context: .
       dockerfile: CatanGame/CatanGameManager.API/Dockerfile
 
