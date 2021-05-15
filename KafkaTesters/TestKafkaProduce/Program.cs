@@ -6,10 +6,12 @@ namespace TestApi
 {
     class Program
     {
+        private const string kafkaAddress = "localhost:9092";
+
         static async Task Main(string[] args)
         {
 
-            var config = new ProducerConfig { BootstrapServers = "localhost:9092" };
+            var config = new ProducerConfig { BootstrapServers = kafkaAddress };
             // If serializers are not specified, default serializers from
             // `Confluent.Kafka.Serializers` will be automatically used where
             // available. Note: by default strings are encoded as UTF8.

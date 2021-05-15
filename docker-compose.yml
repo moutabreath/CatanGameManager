@@ -16,7 +16,7 @@ services:
     image: wurstmeister/kafka:2.12-2.5.0
     ports:
       - "9092:9092"
-    links:
+    depends_on:
       - zookeeper
     environment:
       KAFKA_LISTENERS: PLAINTEXT://:9092
