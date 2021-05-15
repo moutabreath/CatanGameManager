@@ -32,6 +32,4 @@ services:
       - "5002:80"
       - "5003:443"
     volumes:
-      # - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
-      # - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
       - ./https/aspnetapp.pfx:/https/aspnetapp.pfx:ro
