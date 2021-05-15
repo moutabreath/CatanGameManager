@@ -11,3 +11,6 @@
 
 *.log
 /https/aspnetapp.pfx
+.vscode/tasks.json
+.vscode/launch.json
+Users/UserManager/appsettings.json
