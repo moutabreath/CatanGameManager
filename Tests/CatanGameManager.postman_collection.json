@@ -1,0 +1,204 @@
+{
+	"info": {
+		"_postman_id": "19b675b0-884f-4e37-9a31-0dd7bb916308",
+		"name": "CatanGameManager",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Add Player",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"Name\": \"name\",\r\n    \"Email\": \"email@email.com\",\r\n    \"UserName\": \"almighty\",\r\n    \"Password\": \"Password\",\r\n    \"FirstName\": \"FirstName\",\r\n    \"LastName\": \"LastName\",\r\n    \"TotalPoints\": 0\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:5001/Account/RegisterUser",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"Account",
+						"RegisterUser"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Player",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"userName\": \"email@email.com\",\r\n    \"password\": \"Password\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:5001/account/GetUser",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"account",
+						"GetUser"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search Player",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:5001/account/SearchPlayer?userName=almighty",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"account",
+						"SearchPlayer"
+					],
+					"query": [
+						{
+							"key": "userName",
+							"value": "almighty"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Game",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n   \"BanditsDistance\":7,\r\n   \"ActivePlayers\":[\r\n      \r\n   ],\r\n   \"RecentDiceRolls\":[\r\n      \r\n   ],\r\n   \"Id\":{{catan_game_Id}}\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:5003/Game/UpdateGame",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5003",
+					"path": [
+						"Game",
+						"UpdateGame"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetUserActiveGames",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:5003/Game/GetUserActiveGames/almighty",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5003",
+					"path": [
+						"Game",
+						"GetUserActiveGames",
+						"almighty"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "AddPlayerToGame",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"userName\": \"almighty\",\r\n  \"catanGame\": {\r\n    \"id\": \"bf1c0d59-f837-4ae2-a2a7-3e4c072583c2\",\r\n    \"banditsDistance\": 0,\r\n    \"activePlayers\": [    \r\n    ],\r\n    \"recentDiceRolls\": [\r\n      {}\r\n    ]\r\n  }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:5003/Game/AddPlayerToGame",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5003",
+					"path": [
+						"Game",
+						"AddPlayerToGame"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "AddPlayerVictoryPoint",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"game\": {\r\n    \"id\": \"{{catan_game_Id}}\",\r\n    \"banditsDistance\": 0,\r\n    \"activePlayers\": [\r\n      {\r\n        \"id\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\r\n        \"userName\": \"string\",\r\n        \"numOfSettlements\": 0,\r\n        \"numOfCities\": 0,\r\n        \"numOfContinousRoads\": 0,\r\n        \"numOfRoadsLeft\": 0,\r\n        \"numOfActiveKnights\": 0,\r\n        \"numOfTotalKnights\": 0,\r\n        \"amountOfVictoryPoints\": 0,\r\n        \"saviorOfCatanVP\": 0,\r\n        \"numOfVictoryPoints\": 0,\r\n        \"specialVictoryPoints\": 0,\r\n        \"interChanageableVPs\": [\r\n          0\r\n        ]\r\n      }\r\n    ],\r\n    \"recentDiceRolls\": [\r\n      {}\r\n    ]\r\n  },  \r\n  \"activePlayer\": {\r\n    \"id\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\r\n    \"userName\": \"string\",\r\n    \"numOfSettlements\": 0,\r\n    \"numOfCities\": 0,\r\n    \"numOfContinousRoads\": 0,\r\n    \"numOfRoadsLeft\": 0,\r\n    \"numOfActiveKnights\": 0,\r\n    \"numOfTotalKnights\": 0,\r\n    \"amountOfVictoryPoints\": 0,\r\n    \"saviorOfCatanVP\": 0,\r\n    \"numOfVictoryPoints\": 0,\r\n    \"specialVictoryPoints\": 0,\r\n    \"interChanageableVPs\": [\r\n      0\r\n    ]\r\n  },\r\n  \"updateType\": {\r\n    \"typeToUpdate\": 0,\r\n    \"typeOfInterchangeable\": 0\r\n  }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:5003/Game/AddPlayerVictoryPoint",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5003",
+					"path": [
+						"Game",
+						"AddPlayerVictoryPoint"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
