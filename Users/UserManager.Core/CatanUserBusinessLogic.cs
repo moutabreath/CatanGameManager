@@ -59,7 +59,7 @@ namespace CatanGameManager.Core
             _logger?.LogDebug($"ConsumeTopic");
             var config = new ConsumerConfig
             {
-                BootstrapServers = "localhost:9092",
+                BootstrapServers = "kafka-server:9092",
                 GroupId = "foo",
                 AutoOffsetReset = AutoOffsetReset.Earliest
             };
