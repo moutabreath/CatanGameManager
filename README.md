@@ -6,7 +6,8 @@ This is a REST API only project. Later versions will include some GUI.
 This was developed using dot net 5.0 web api.
 
 # Setup
-## Locally:
+
+## Locally
 
 ### Requirements:
  - Dotnet 5.0 SDK.
@@ -16,7 +17,7 @@ This was developed using dot net 5.0 web api.
 
 Publish and run on IIS Express / IIS.
 
-## Using Docker.
+## Using Docker
 The docker-compose file consitsts of 4 parts.
  - User registarion microservice.
  - Game management microservice.
@@ -27,7 +28,7 @@ The docker-compose file consitsts of 4 parts.
 - Run docker-compose up from the root of the library
 
 
-# Usage (docker only):
+# Usage (docker only)
 
 It is incoporated with SwaggerUI to see the available endpoints for each microservice.
 
