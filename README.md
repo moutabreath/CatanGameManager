@@ -36,6 +36,6 @@ It is incoporated with SwaggerUI to see the available endpoints for each microse
  - For game managmenr type in the browser https://localhost:5003 to see avaiable end points.
  
 Altenernately, under 'Tests' folder, there is a postman collection that was used to test the app.
-It is recommended to first run 'AddPlayer', then 'AddPlayerToGame.' Ater that it is possible to use the different end points.
+It is recommended to first run 'AddPlayer', then 'AddPlayerToGame.' After that it is possible to use the different end points.
 
 
