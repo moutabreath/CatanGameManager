@@ -17,7 +17,7 @@ This was developed using dot net 5.0 web api.
 
 Publish and run on IIS Express / IIS.
 
-## Using Docker
+## Docker
 The docker-compose file consitsts of 4 parts.
  - User registarion microservice.
  - Game management microservice.
