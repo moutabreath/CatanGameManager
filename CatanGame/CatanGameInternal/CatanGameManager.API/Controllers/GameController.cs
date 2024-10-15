@@ -111,7 +111,7 @@ namespace CatanGameManager.API.Controllers
         [HttpPost]
         public async Task AddPlayerKnight([FromBody] AddPlayerKnightRequest addPlayerKnightRequest)
         {
-            _logger?.LogDebug($"GetTotalActiveKnights for game: {addPlayerKnightRequest.ActivePlayerId}");
+            _logger?.LogDebug($"AddPlayerKnight: GameId {addPlayerKnightRequest.GameId}, ActivePlayerId {addPlayerKnightRequest.ActivePlayerId}, KnightRank:{addPlayerKnightRequest.KnightRank}");
             await _catanGameBusinessLogic.AddPlayerKnight(addPlayerKnightRequest.GameId, addPlayerKnightRequest.ActivePlayerId, addPlayerKnightRequest.KnightRank);
         }
 
