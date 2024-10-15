@@ -36,7 +36,7 @@ namespace CatanGameManager.API
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "Internal Game API WSVAP (WebSmartView)", Version = "v1" });
+                c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "Internal Game Manager API", Version = "v1" });
                 c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
             });
         }
