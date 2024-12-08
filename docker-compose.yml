@@ -35,5 +35,5 @@ services:
         - usermanager.api
     build:      
       context: .
-      dockerfile: CatanGame/CatanGameManager.API/Dockerfile
+      dockerfile: CatanGame/CatanGameInternal/CatanGameManager.API/Dockerfile
 
