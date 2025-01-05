@@ -5,7 +5,7 @@ metadata:
   labels:
     app: catan-game-manager
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: catan-game-manager
@@ -17,6 +17,13 @@ spec:
       containers:
       - name: catan-game-manager
         image: moutabreath/catan-game-internal:latest
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
         ports:
         - containerPort: 80
         - containerPort: 443
