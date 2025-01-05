@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.11.35303.130
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CatanGameInternal", "CatanGameInternal", "{86F22CF2-9D26-4CDC-8F86-69F47B8D7ABD}"
+	ProjectSection(SolutionItems) = preProject
+		configuration.yaml = configuration.yaml
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Users", "Users", "{127DBF8E-FD80-454D-B03F-3E56CB339D48}"
 EndProject

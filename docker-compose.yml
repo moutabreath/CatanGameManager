@@ -1,5 +1,3 @@
-version: '3.4'
-
 services:
   mongo:
     image: mongo
@@ -22,18 +20,7 @@ services:
       KAFKA_LISTENERS: PLAINTEXT://:9092
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://127.0.0.1:9092
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-  usermanager.api:
-    # image: ${DOCKER_REGISTRY-}usermanagerapi
-    depends_on:
-        - kafka
-    build:      
-      context: .
-      dockerfile: Users/UserManager/Dockerfile
   catangamemanager.api:
-    # image: ${DOCKER_REGISTRY-}catangamemanagerapi
-    depends_on:
-        - usermanager.api
     build:      
       context: .
       dockerfile: CatanGame/CatanGameInternal/CatanGameManager.API/Dockerfile
-

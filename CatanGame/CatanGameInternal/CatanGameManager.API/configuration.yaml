@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: catan-game-manager-deployment
+  labels:
+    app: catan-game-manager
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: catan-game-manager
+  template:
+    metadata:
+      labels:
+        app: catan-game-manager
+    spec:
+      containers:
+      - name: catan-game-manager
+        image: moutabreath/catan-game-internal:latest
+        ports:
+        - containerPort: 80
+        - containerPort: 443
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Development"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: catan-game-manager-service
+spec:
+  selector:
+    app: catan-game-manager
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+  - protocol: TCP
+    port: 443
+    targetPort: 443
+  type: ClusterIP
