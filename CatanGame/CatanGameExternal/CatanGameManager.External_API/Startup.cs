@@ -1,7 +1,4 @@
-﻿using CatanGameManager.CommonObjects.Config;
-using CommonLib.Config;
-
-namespace CatanGameManager.External_API
+﻿namespace CatanGameManager.External_API
 {
     public class Startup
     {
@@ -28,7 +25,7 @@ namespace CatanGameManager.External_API
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
             string path = Directory.GetCurrentDirectory();
-            loggerFactory.AddFile($"{path}\\Logs\\InternalCatanGameLog.log");
+            loggerFactory.AddFile($"{path}\\Logs\\ExternalCatanGameLog.log");
 
             if (env.IsDevelopment())
             {
@@ -37,12 +34,12 @@ namespace CatanGameManager.External_API
                 app.UseSwagger();
                 app.UseSwaggerUI(c =>
                 {
-                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Internal Game API V1");
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "External Game API V1");
                     c.RoutePrefix = string.Empty;
                 });
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             app.UseRouting();
             app.UseAuthorization();
 

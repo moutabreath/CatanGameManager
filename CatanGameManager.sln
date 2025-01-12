@@ -4,9 +4,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.11.35303.130
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CatanGameInternal", "CatanGameInternal", "{86F22CF2-9D26-4CDC-8F86-69F47B8D7ABD}"
-	ProjectSection(SolutionItems) = preProject
-		configuration.yaml = configuration.yaml
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Users", "Users", "{127DBF8E-FD80-454D-B03F-3E56CB339D48}"
 EndProject
@@ -50,7 +47,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CatanGameManager.Core", "Ca
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CatanGameManger.Persistence.Mongo", "CatanGame\CatanGameInternal\CatanGameManger.Persistence.Mongo\CatanGameManger.Persistence.Mongo.csproj", "{9F6B2AD7-DD6B-4B3C-93C3-009E6BCB6AB3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CatanGameManager.External_API", "CatanGame\CatanGameExternal\CatanGameManager.External_API\CatanGameManager.External_API.csproj", "{1C3E6518-2303-4528-AE64-41DFA7577A31}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CatanGameManager.External_API", "CatanGame\CatanGameExternal\CatanGameManager.External_API\CatanGameManager.External_API.csproj", "{C8F6EA5A-A620-4CD7-8791-05B96141290E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -118,10 +115,10 @@ Global
 		{9F6B2AD7-DD6B-4B3C-93C3-009E6BCB6AB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9F6B2AD7-DD6B-4B3C-93C3-009E6BCB6AB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9F6B2AD7-DD6B-4B3C-93C3-009E6BCB6AB3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1C3E6518-2303-4528-AE64-41DFA7577A31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1C3E6518-2303-4528-AE64-41DFA7577A31}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1C3E6518-2303-4528-AE64-41DFA7577A31}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1C3E6518-2303-4528-AE64-41DFA7577A31}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8F6EA5A-A620-4CD7-8791-05B96141290E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8F6EA5A-A620-4CD7-8791-05B96141290E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8F6EA5A-A620-4CD7-8791-05B96141290E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8F6EA5A-A620-4CD7-8791-05B96141290E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -143,7 +140,7 @@ Global
 		{1F3D551D-6BCB-4BF6-9FD9-C85E209194A7} = {86F22CF2-9D26-4CDC-8F86-69F47B8D7ABD}
 		{FFD83A72-B8E5-477F-B11F-3754A5DB0A4F} = {86F22CF2-9D26-4CDC-8F86-69F47B8D7ABD}
 		{9F6B2AD7-DD6B-4B3C-93C3-009E6BCB6AB3} = {86F22CF2-9D26-4CDC-8F86-69F47B8D7ABD}
-		{1C3E6518-2303-4528-AE64-41DFA7577A31} = {A321F135-F377-4DF8-B5F0-2E1CD030A353}
+		{C8F6EA5A-A620-4CD7-8791-05B96141290E} = {A321F135-F377-4DF8-B5F0-2E1CD030A353}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {339D59EB-C29E-4823-A83A-4F8E5E0BD31C}
