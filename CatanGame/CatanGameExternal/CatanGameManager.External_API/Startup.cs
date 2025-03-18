@@ -1,11 +1,10 @@
-﻿namespace CatanGameManager.External_API
+﻿using Serilog;
+
+namespace CatanGameManager.External_API
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
+        public Startup(IConfiguration configuration) => Configuration = configuration;
 
         public IConfiguration Configuration { get; }
 
@@ -25,7 +24,15 @@
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
             string path = Directory.GetCurrentDirectory();
-            loggerFactory.AddFile($"{path}\\Logs\\ExternalCatanGameLog.log");
+            Log.Logger = new LoggerConfiguration()
+                          .MinimumLevel.Debug()
+                          .Enrich.FromLogContext()
+                          .WriteTo.File($"{path}\\Logs\\ExternalCatanGameLog.log",
+                          outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level:u3}] [{SourceContext}] {Message:lj}{NewLine}{Exception}")
+                         .CreateLogger();
+
+            // Connect the built-in logger factory to Serilog
+            loggerFactory.AddSerilog();
 
             if (env.IsDevelopment())
             {

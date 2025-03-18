@@ -10,19 +10,15 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Serilog;
 using System.IO;
 using System.Linq;
 
 namespace CatanGameManager.API
 {
-    public class Startup
+    public class Startup(IConfiguration configuration)
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
-
-        public IConfiguration Configuration { get; }
+        public IConfiguration Configuration { get; } = configuration;
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -45,7 +41,15 @@ namespace CatanGameManager.API
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
             string path = Directory.GetCurrentDirectory();
-            loggerFactory.AddFile($"{path}\\Logs\\InternalCatanGameLog.log");
+            Log.Logger = new LoggerConfiguration()
+                      .MinimumLevel.Debug()
+                      .Enrich.FromLogContext()
+                      .WriteTo.File($"{path}\\Logs\\InternalCatanGameLog.log",
+                      outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level:u3}] [{SourceContext}] {Message:lj}{NewLine}{Exception}")
+                     .CreateLogger();
+
+            // Connect the built-in logger factory to Serilog
+            loggerFactory.AddSerilog();
 
             if (env.IsDevelopment())
             {
