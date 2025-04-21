@@ -1,7 +1,7 @@
 ﻿using CatanGameManager.CommonObjects.Enums;
 using System;
 
-namespace CatanGameManager.API.Requests
+namespace CatanGameManager.ExternalAPI.Requests
 {
     public class AddPlayerKnightRequest
     {

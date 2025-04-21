@@ -4,6 +4,6 @@ namespace CatanGameManager.CommonObjects.Config
 {
     public class GameManagerConfig
     {
-        public string UsersEndpoint { get; set; }
+        public required string UsersEndpoint { get; set; }
     }
 }

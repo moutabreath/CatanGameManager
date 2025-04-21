@@ -6,7 +6,7 @@ namespace CatanGameManager.CommonObjects.User
 {
     public class ActivePlayer: Entity
     {
-        public string UserName { get; set; }
+        public required string UserName { get; set; }
         public int NumOfSettlements { get; set; }
         public int NumOfCities { get; set; }
         public int NumOfContinousRoads { get; set; }
@@ -17,7 +17,7 @@ namespace CatanGameManager.CommonObjects.User
         public int SaviorOfCatanVP { get; set; }
         public int NumOfVictoryPoints { get; set; }
         public int SpecialVictoryPoints { get; set; }
-        public IList <VPType.InterChanageableVP> InterChanageableVPs { get; set; }
+        public required IList<VPType.InterChanageableVP> InterChanageableVPs { get; set; } = [];
 
     }
 }

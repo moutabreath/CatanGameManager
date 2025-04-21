@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using CatanGameManager.API.Requests;
 using CatanGameManager.CommonObjects;
 using CatanGameManager.CommonObjects.Config;
+using CatanGameManager.ExternalAPI.Requests;
 using CatanGameManager.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;

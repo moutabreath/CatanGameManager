@@ -2,6 +2,6 @@
 {
     public class ExternalGameManagerConfig
     {
-        public string ServiceHost { get; set; }
+        public required string ServiceHost { get; set; }
     }
 }

@@ -1,10 +1,10 @@
-﻿using CatanGameManager.API.Requests;
-using CatanGameManager.CommonObjects;
+﻿using CatanGameManager.CommonObjects;
 using CatanGameManager.External_API.Config;
+using CatanGameManager.ExternalAPI.Requests;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
-namespace CatanGameManager.API.Controllers
+namespace CatanGameManager.ExternalAPI.Controllers
 {
     /// <summary>
     /// The web interface includes most common game update options.
@@ -46,7 +46,7 @@ namespace CatanGameManager.API.Controllers
         [HttpGet("{catanGameId}")]
         public async Task<CatanGame> GetGame(Guid catanGameId)
         {
-            _logger?.LogDebug($"GetGame for game: {catanGameId}");            
+            _logger?.LogDebug($"GetGame for game: {catanGameId}");
             CatanGame? catanGame = null;
             try
             {
@@ -60,7 +60,11 @@ namespace CatanGameManager.API.Controllers
             if (catanGame == null)
             {
                 _logger?.LogError($"GetGame Unexpected response catanGameId: {catanGameId}");
-                return new CatanGame();
+                return new CatanGame
+                {
+                    ActivePlayers = [],
+                    RecentDiceRolls = []
+                };
             }
             return catanGame;
         }
