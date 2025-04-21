@@ -91,7 +91,7 @@ namespace CatanGameManager.Core
         /// </summary>
         /// <param name="activePlayer"></param>
         /// <returns></returns>
-        private async Task <int> GetPlayerTotalVps(ActivePlayer activePlayer)
+        private async Task<int> GetPlayerTotalVps(ActivePlayer activePlayer)
         {
             int interchangeabelCounter = 0;
             if (activePlayer.InterChanageableVPs != null)
@@ -121,17 +121,21 @@ namespace CatanGameManager.Core
                 // If serializers are not specified, default serializers from
                 // `Confluent.Kafka.Serializers` will be automatically used where
                 // available. Note: by default strings are encoded as UTF8.
-                using (IProducer<Null, string> producer = new ProducerBuilder<Null, string>(config).Build())
+                using IProducer<string, int> producer = new ProducerBuilder<string, int>(config).Build();
+                try
                 {
-                    try
-                    {
-                        DeliveryResult<Null, string> directoryResult = await producer.ProduceAsync("player-points", new Message<Null, string> { Value = $"{activePlayer.UserName}" });
-                        _logger?.LogInformation($"Delivered '{directoryResult.Value}' to '{directoryResult.TopicPartitionOffset}'");
-                    }
-                    catch (ProduceException<Null, string> ex)
-                    {
-                        _logger?.LogError("Error producing ", ex);
-                    }
+                    DeliveryResult<string, int> messageResult = await producer.ProduceAsync(
+                        "player-points",
+                        new Message<string, int>
+                        {
+                            Key = activePlayer.UserName, 
+                            Value = 1  
+                        }
+                    );
+                }
+                catch (ProduceException<string, int> ex)
+                {
+                    _logger?.LogError(ex, "Error producing");
                 }
             }
             return numberOfVps;
@@ -160,7 +164,7 @@ namespace CatanGameManager.Core
 
         private async Task AddNonInterchaneableVPs(CatanGame catanGame, ActivePlayer activePlayer, VPType updateType)
         {
-            _logger?.LogDebug($"AddVPsToSelectedPlayer game: {catanGame.Id}, player {activePlayer.Id}, updateType: {updateType.TypeToUpdate}");            
+            _logger?.LogDebug($"AddVPsToSelectedPlayer game: {catanGame.Id}, player {activePlayer.Id}, updateType: {updateType.TypeToUpdate}");
             switch (updateType.TypeToUpdate)
             {
                 //TODO: Update remaining settlements / cities
@@ -218,7 +222,7 @@ namespace CatanGameManager.Core
             _logger?.LogDebug($"DeactivateAllKnights for catanGame: {catanGameId}");
             await _catanGamePersist.DeactivateAllKnights(catanGameId);
         }
-      
+
 
         #endregion  game and player knights
     }
