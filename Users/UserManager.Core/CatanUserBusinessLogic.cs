@@ -12,12 +12,12 @@ namespace CatanGameManager.Core
     public class CatanUserBusinessLogic : ICatanUserBusinessLogic
     {
         private readonly ILogger<CatanUserBusinessLogic> _logger;
-        private readonly ICatanUserPersist _catanGamePersist;
+        private readonly ICatanUserPersist catanUserPersist;
 
-        public CatanUserBusinessLogic(ILogger<CatanUserBusinessLogic> logger, ICatanUserPersist catanGamePersist)
+        public CatanUserBusinessLogic(ILogger<CatanUserBusinessLogic> logger, ICatanUserPersist catanUserPersist)
         {
             _logger = logger;
-            _catanGamePersist = catanGamePersist;
+            this.catanUserPersist = catanUserPersist;
         }
 
         public async Task<bool> RegisterPlayer(UserProfile playerProfile)
@@ -26,32 +26,32 @@ namespace CatanGameManager.Core
             UserProfile user = await GetUser(playerProfile.Name, playerProfile.Password);
             if (user != null) return false;
 
-            await _catanGamePersist.UpdateUser(playerProfile);
+            await catanUserPersist.UpdateUser(playerProfile);
             return true;
         }
 
         public async Task UpdatePlayer(UserProfile playerProfile)
         {
             _logger?.LogDebug($"UpdatePlayer: {playerProfile.Name}");
-            await _catanGamePersist.UpdateUser(playerProfile);
+            await catanUserPersist.UpdateUser(playerProfile);
         }
 
         public async Task<UserProfile> GetUser(string userName, string password)
         {
             _logger?.LogDebug($"GetPlayer: {userName}");
-            return await _catanGamePersist.GetUser(userName, password);
+            return await catanUserPersist.GetUser(userName, password);
         }
         
         public async Task UnRegisterUser(Guid userId)
         {
             _logger?.LogDebug($"UnRegisterUser: {userId}");
-             await _catanGamePersist.UnRegisterUser(userId);
+             await catanUserPersist.UnRegisterUser(userId);
         }
 
         public async Task<List<UserProfile>> SearchUser(string userName)
         {
             _logger?.LogDebug($"SearchUser: {userName}");
-            return await _catanGamePersist.SearchUser(userName);
+            return await catanUserPersist.SearchUser(userName);
         }
 
         public async Task ConsumeTopic()
@@ -63,23 +63,20 @@ namespace CatanGameManager.Core
                 GroupId = "foo",
                 AutoOffsetReset = AutoOffsetReset.Earliest
             };
-            IList<string> topics = new List<string>
-            {
+            IList<string> topics =
+            [
                 "player-points"
-            };
-            using (var consumer = new ConsumerBuilder<Ignore, string>(config).Build())
-            {
-                consumer.Subscribe(topics);
-                var consumeResult = consumer.Consume(5000);
-                await _catanGamePersist.AddPlayerPoints(consumeResult.Message.Value, 50);
-                
-            }
+            ];
+            using var consumer = new ConsumerBuilder<Ignore, string>(config).Build();
+            consumer.Subscribe(topics);
+            var consumeResult = consumer.Consume(5000);
+            await catanUserPersist.AddPlayerPoints(consumeResult.Message.Value, 50);
         }
 
         public async Task<bool> ValidateUser(Guid userId)
         {
             _logger?.LogDebug($"ValidateUser: {userId}");
-            UserProfile userProfile =  await _catanGamePersist.GetUser(userId);
+            UserProfile userProfile =  await catanUserPersist.GetUser(userId);
             return userProfile != null;
         }
     }

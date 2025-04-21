@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
+using System;
 using System.IO;
 using System.Linq;
 
@@ -23,7 +24,17 @@ namespace CatanGameManager.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<MongoConfig>(Configuration.GetSection("MongoConfig"));
+            services.Configure<MongoConfig>(options =>
+            {
+                // Bind the configuration section
+                Configuration.GetSection("MongoConfig").Bind(options);
+
+                var mongoConnectionString = Environment.GetEnvironmentVariable("MongoConnectionString");
+                if (!string.IsNullOrEmpty(mongoConnectionString))
+                {
+                    options.MongoConnectionString = mongoConnectionString;
+                }
+            });
             services.Configure<GameManagerConfig>(Configuration.GetSection("GameManagerConfig"));
 
             services.AddScoped<ICatanGameBusinessLogic, CatanGameBusinessLogic>();

@@ -30,11 +30,11 @@ namespace CatanGameManager.Core
             _logger?.LogDebug($"UpdateGame for game: {catanGame.Id}");
             if (catanGame.ActivePlayers == null)
             {
-                catanGame.ActivePlayers = new List<ActivePlayer>();
+                catanGame.ActivePlayers = [];
             }
             if (catanGame.RecentDiceRolls == null)
             {
-                catanGame.RecentDiceRolls = new List<Tuple<int, int>>();
+                catanGame.RecentDiceRolls = [];
             }
             await _catanGamePersist.UpdateGame(catanGame);
         }
@@ -55,10 +55,10 @@ namespace CatanGameManager.Core
         {
             _logger?.LogDebug($"AddPlayerToGame for catanGame: {catanGame.Id}, player: {userName}");
 
-            ActivePlayer activePlayer = new ActivePlayer
+            ActivePlayer activePlayer = new()
             {
                 Id = Guid.NewGuid(),
-                InterChanageableVPs = new List<VPType.InterChanageableVP>(),
+                InterChanageableVPs = [],
                 NumOfActiveKnights = 0,
                 NumOfCities = 0,
                 NumOfContinousRoads = 0,

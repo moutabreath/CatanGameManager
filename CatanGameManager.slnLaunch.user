@@ -4,11 +4,13 @@
     "Projects": [
       {
         "Path": "CatanGame\\CatanGameInternal\\CatanGameManager.API\\CatanGameManager.Internal_API.csproj",
-        "Action": "Start"
+        "Action": "Start",
+        "DebugTarget": "http"
       },
       {
         "Path": "CatanGame\\CatanGameExternal\\CatanGameManager.External_API\\CatanGameManager.External_API.csproj",
-        "Action": "Start"
+        "Action": "Start",
+        "DebugTarget": "http"
       }
     ]
   }
