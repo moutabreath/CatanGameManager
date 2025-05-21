@@ -14,8 +14,12 @@ namespace CatanGameManager.Core
         public async Task<bool> RegisterPlayer(UserProfile playerProfile)
         {
             logger?.LogDebug($"AddPlayer: {playerProfile.Id}");
-            UserProfile user = await GetUser(playerProfile.Name, playerProfile.Password);
-            if (user != null) return false;
+            UserProfile user = await GetUser(playerProfile.Email, playerProfile.Password);
+            if (user != null)
+            {
+                logger?.LogWarning($"AddPlayer: Tried to re-register an existing user {playerProfile.Id}");
+                return false;
+            }
 
             return await catanUserPersist.UpdateUser(playerProfile);
         }

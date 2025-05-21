@@ -9,6 +9,7 @@ using CatanGameManager.Interfaces.PersistanceInterfaces;
 using CommonLib.Config;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
@@ -32,7 +33,7 @@ namespace CatanGamePersistence.MongoDB
         }
 
 
-        public async Task UpdatePlayerInGame(CatanGame catanGame, ActivePlayer playerToUpdate)
+        public async Task<bool> UpdatePlayerInGame(CatanGame catanGame, ActivePlayer playerToUpdate)
         {
             _logger?.LogDebug($"UpdatePlayerInGame, game: {catanGame.Id}, player: {playerToUpdate.Id}");
 
@@ -41,12 +42,17 @@ namespace CatanGamePersistence.MongoDB
             if (!doesPlayerExist)
             {
                 _logger?.LogError($"UpdatePlayerInGame. Player is not added into the game. game: {catanGame.Id}, player: {playerToUpdate.Id}");
-                return;
+                return false;
             }
             FilterDefinition<CatanGame> filter = Builders<CatanGame>.Filter.Where(catanGame => catanGame.Id == catanGame.Id
                                                           && catanGame.ActivePlayers.Any(activePlayer => activePlayer.Id == playerToUpdate.Id));
             UpdateDefinition<CatanGame> update = Builders<CatanGame>.Update.Set(catanGame => catanGame.ActivePlayers[-1], playerToUpdate);
-            await MongoCollection.UpdateOneAsync(filter, update);
+            UpdateResult result = await MongoCollection.UpdateOneAsync(filter, update);
+            if (result != null)
+            {
+                return result.IsAcknowledged;
+            }
+            return false;
         }
 
         public async Task<CatanGame> GetGame(Guid gameId)
@@ -77,13 +83,18 @@ namespace CatanGamePersistence.MongoDB
             return await UpdateEntity(catanGame, MongoCollection, filter);
         }
 
-        public async Task RemoveGame(CatanGame catanGame)
+        public async Task<bool> RemoveGame(CatanGame catanGame)
         {
             _logger?.LogDebug($"RemoveGame: {catanGame.Id}");
-            await MongoCollection.DeleteOneAsync(game => game.Id == catanGame.Id);
+            DeleteResult result =await MongoCollection.DeleteOneAsync(game => game.Id == catanGame.Id);
+            if (result != null)
+            {
+                return result.IsAcknowledged;
+            }
+            return false;
         }
 
-        public async Task DeactivateAllKnights(Guid catanGameId)
+        public async Task<bool> DeactivateAllKnights(Guid catanGameId)
         {
             _logger?.LogDebug($"DeactivateAllKnights game: {catanGameId}");
 
@@ -96,10 +107,15 @@ namespace CatanGamePersistence.MongoDB
                                                      // The "-1" index matches ALL the items matching the filter
                                                      .Set(catanGame => catanGame.ActivePlayers[-1].NumOfActiveKnights, 0);
 
-            await MongoCollection.UpdateOneAsync(filter, update);
+            UpdateResult result = await MongoCollection.UpdateOneAsync(filter, update);
+            if (result != null)
+            {
+                return result.IsAcknowledged;
+            }
+            return false;
         }
 
-        public async Task ActivateAllKnightsForPlayer(Guid catanGameId, Guid playerId)
+        public async Task<bool> ActivateAllKnightsForPlayer(Guid catanGameId, Guid playerId)
         {
             _logger?.LogDebug($"ActivateAllKnightsForPlayer, game: {catanGameId}, player: {playerId}");
 
@@ -111,10 +127,15 @@ namespace CatanGamePersistence.MongoDB
                         && catanGame.ActivePlayers.Any(activePlayer => activePlayer != null));
 
             var update = Builders<CatanGame>.Update.Set(x => x.ActivePlayers[-1].NumOfActiveKnights, activePlayerToUpdate.NumOfTotalKnights);
-            await MongoCollection.UpdateOneAsync(filter, update);
+            UpdateResult result = await MongoCollection.UpdateOneAsync(filter, update);
+            if (result != null)
+            {
+                return result.IsAcknowledged;
+            }
+            return false;
         }
 
-        public async Task AdvanceBarbarians(Guid catanGameId)
+        public async Task<bool> AdvanceBarbarians(Guid catanGameId)
         {
             _logger?.LogDebug($"AdvanceBarbarians, game: {catanGameId}");
             CatanGame game = (await MongoCollection.FindAsync(game => game.Id == catanGameId)).FirstOrDefault();
@@ -123,7 +144,12 @@ namespace CatanGamePersistence.MongoDB
             FilterDefinition<CatanGame> filter = Builders<CatanGame>.Filter.Where(catanGame => catanGame.Id == catanGameId);
             UpdateDefinition<CatanGame> update = Builders<CatanGame>.Update.Set(catanGame => catanGame.BanditsDistance, game.BanditsDistance);
 
-            await MongoCollection.UpdateOneAsync(filter, update);
+            UpdateResult result = await MongoCollection.UpdateOneAsync(filter, update);
+            if (result != null)
+            {
+                return result.IsAcknowledged;
+            }
+            return false;
         }
 
         public async Task AddPlayerKnight(Guid catanGameId, Guid activePlayerId, KnightRank knightRank)
@@ -150,7 +176,6 @@ namespace CatanGamePersistence.MongoDB
 
             await MongoCollection.UpdateOneAsync(filter, update);
         }
-
         public async Task<int> GetTotalActiveKnights(Guid catanGameId)
         {
             _logger?.LogDebug($"GetTotalActiveKnights: {catanGameId}");

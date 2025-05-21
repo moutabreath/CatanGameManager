@@ -11,16 +11,16 @@ namespace CatanGameManager.Interfaces.PersistanceInterfaces
     {
         Task<bool> UpdateGame(CatanGame catanGame);
         Task<CatanGame> GetGame(Guid gameId);
-        Task RemoveGame(CatanGame catanGame);
+        Task <bool> RemoveGame(CatanGame catanGame);
         Task<IEnumerable<CatanGame>> GetUserActiveGames(string userName);
         
-        Task UpdatePlayerInGame(CatanGame catanGame, ActivePlayer playerToUpdate);
+        Task<bool> UpdatePlayerInGame(CatanGame catanGame, ActivePlayer playerToUpdate);
 
         Task<int> GetGameTotalActiveKnights(Guid gameId);
-        Task AddPlayerKnight(Guid gameId, Guid activePlayerId, KnightRank knightRank);
-        Task AdvanceBarbarians(Guid gameId);
-        Task ActivateAllKnightsForPlayer(Guid gameId, Guid playerId);
-        Task DeactivateAllKnights(Guid gameId);
+        Task<bool> AddPlayerKnight(Guid gameId, Guid activePlayerId, KnightRank knightRank);
+        Task<bool> AdvanceBarbarians(Guid gameId);
+        Task<bool> ActivateAllKnightsForPlayer(Guid gameId, Guid playerId);
+        Task<bool> DeactivateAllKnights(Guid gameId);
         
     }
 }

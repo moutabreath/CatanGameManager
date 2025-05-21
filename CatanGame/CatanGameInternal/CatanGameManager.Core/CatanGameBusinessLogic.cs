@@ -37,7 +37,7 @@ namespace CatanGameManager.Core
             return await catanGamePersist.GetUserActiveGames(userName);
         }
 
-        public async Task AddPlayerToGame(CatanGame catanGame, string userName)
+        public async Task<bool> AddPlayerToGame(CatanGame catanGame, string userName)
         {
             logger?.LogDebug($"AddPlayerToGame for catanGame: {catanGame.Id}, player: {userName}");
 
@@ -54,7 +54,7 @@ namespace CatanGameManager.Core
             };
 
             catanGame.ActivePlayers.Add(activePlayer);
-            await catanGamePersist.UpdateGame(catanGame);
+            return await catanGamePersist.UpdateGame(catanGame);
         }
         public async Task UpdatePlayerInGame(CatanGame catanGame, ActivePlayer playerToUpdate)
         {
