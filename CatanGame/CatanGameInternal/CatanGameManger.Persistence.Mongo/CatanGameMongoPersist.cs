@@ -15,21 +15,18 @@ using MongoDB.Driver.Linq;
 
 namespace CatanGamePersistence.MongoDB
 {
-    public class CatanGameMongoPersist : CatanEntityMongoPersist<CatanGame>, ICatanGamePersist
+    public class CatanGameMongoPersist(ILogger<CatanGameMongoPersist> logger, IOptions<MongoConfig> options) : 
+		CatanEntityMongoPersist<CatanGame>(logger, options, options.Value.MongoGameDocumentName), ICatanGamePersist
     {
-        public CatanGameMongoPersist(ILogger<CatanGameMongoPersist> logger, IOptions<MongoConfig> options) : base(logger, options, "CatanGame")
-        {
-        }
-
         protected override void InitializeClassMap()
         {
             if (!BsonClassMap.IsClassMapRegistered(typeof(CatanGame)))
             {
-                BsonClassMap.RegisterClassMap<CatanGame>(bsonClassMap =>
+                BsonClassMap.RegisterClassMap<CatanGame>(classMap =>
                 {
-                    bsonClassMap.AutoMap();
-                    bsonClassMap.SetIdMember(bsonClassMap.GetMemberMap(catanGame => catanGame.Id));
-                    bsonClassMap.SetIgnoreExtraElements(true);
+                    classMap.AutoMap();
+                    classMap.SetIdMember(classMap.GetMemberMap(catanGame => catanGame.Id));
+                    classMap.SetIgnoreExtraElements(true);
                 });
             }
         }

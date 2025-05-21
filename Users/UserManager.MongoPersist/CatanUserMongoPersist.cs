@@ -14,11 +14,11 @@ using CommonLib.Config;
 namespace CatanGamePersistence.MongoDB
 {
     public class CatanUserMongoPersist(ILogger<CatanUserMongoPersist> logger, IOptions<MongoConfig> options) : 
-        CatanEntityMongoPersist<UserProfile>(logger, options, "PlayerProfile"), ICatanUserPersist
+        CatanEntityMongoPersist<UserProfile>(logger, options, options.Value.MongoPlayerDocumentName), ICatanUserPersist
     {
         protected override void InitializeClassMap()
         {
-            if (BsonClassMap.IsClassMapRegistered(typeof(UserProfile)) == false)
+            if (!BsonClassMap.IsClassMapRegistered(typeof(UserProfile)))
             {
                 BsonClassMap.RegisterClassMap<UserProfile>(classMap =>
                 {
@@ -43,7 +43,10 @@ namespace CatanGamePersistence.MongoDB
         public async Task<UserProfile> GetUser(string userName, string password)
         {
             _logger?.LogDebug($"GetUser: {userName}");
-            return (await MongoCollection.FindAsync(playerProfile => playerProfile.Email == userName && playerProfile.Password == password)).FirstOrDefault();
+            var debug = MongoCollection.Find(playerProfile => playerProfile.Email == userName && playerProfile.Password == password).FirstOrDefault();
+            return await
+                (await MongoCollection.FindAsync(playerProfile => playerProfile.Email == userName && playerProfile.Password == password))
+                .FirstOrDefaultAsync();
         }
 
         public async Task UnRegisterUser(Guid userId)

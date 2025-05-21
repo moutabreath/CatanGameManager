@@ -22,8 +22,8 @@ namespace CatanGameManager.API.Controllers
         private readonly ICatanGameBusinessLogic _catanGameBusinessLogic;
         private readonly ILogger<GameController> _logger;
         
-        private static readonly HttpClient _sHttpCient = new HttpClient();
-        private string _usersEndpoint;
+        private static readonly HttpClient _sHttpCient = new();
+        private readonly string _usersEndpoint;
 
         public GameController(ILogger<GameController> logger, IOptions<GameManagerConfig> options, ICatanGameBusinessLogic catanGameBusinessLogic)
         {
