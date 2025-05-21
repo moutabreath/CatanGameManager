@@ -17,9 +17,9 @@
   <ItemGroup>
     <ProjectReference Include="..\..\CatanGame\CatanGameInternal\CatanGame.Interfaces\CatanGameManager.Interfaces.csproj" />
     <ProjectReference Include="..\..\CatanGame\CatanGameInternal\CatanGameManager.Core\CatanGameManager.Core.csproj" />
-    <ProjectReference Include="..\..\CatanGame\CatanGameInternal\CatanGameManger.Persistence.Mongo\CatanGameManger.Persistence.Mongo.csproj" />
+    <ProjectReference Include="..\..\CatanGame\CatanGameInternal\CatanGameManger.Persistence.Mongo\CatanGameManger.Persistence.MongoDB.csproj" />
     <ProjectReference Include="..\..\CatanGame\CatanGameManager.Common\CatanGameManager.Common.csproj" />
     <ProjectReference Include="..\..\Users\UserManager.Core\UserManager.Core.csproj" />
-    <ProjectReference Include="..\..\Users\UserManager.MongoPersist\UserManager.MongoPersist.csproj" />
+    <ProjectReference Include="..\..\Users\UserManager.MongoPersist\UserManager.Persistence.MongoDB.csproj" />
   </ItemGroup>
 </Project>

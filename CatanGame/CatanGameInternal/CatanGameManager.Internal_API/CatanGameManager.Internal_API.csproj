@@ -15,7 +15,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\CatanGameExternal\CatanGameManager.External_API\CatanGameManager.External_API.csproj" />
     <ProjectReference Include="..\CatanGameManager.Core\CatanGameManager.Core.csproj" />
-    <ProjectReference Include="..\CatanGameManger.Persistence.Mongo\CatanGameManger.Persistence.Mongo.csproj" />
+    <ProjectReference Include="..\CatanGameManger.Persistence.Mongo\CatanGameManger.Persistence.MongoDB.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Logs\" />

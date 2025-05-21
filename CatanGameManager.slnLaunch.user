@@ -3,14 +3,13 @@
     "Name": "Internal External",
     "Projects": [
       {
-        "Path": "CatanGame\\CatanGameInternal\\CatanGameManager.API\\CatanGameManager.Internal_API.csproj",
+        "Path": "CatanGame\\CatanGameExternal\\CatanGameManager.External_API\\CatanGameManager.External_API.csproj",
         "Action": "Start",
         "DebugTarget": "http"
       },
       {
-        "Path": "CatanGame\\CatanGameExternal\\CatanGameManager.External_API\\CatanGameManager.External_API.csproj",
-        "Action": "Start",
-        "DebugTarget": "http"
+        "Path": "CatanGame\\CatanGameInternal\\CatanGameManager.Internal_API\\CatanGameManager.Internal_API.csproj",
+        "Action": "Start"
       }
     ]
   }

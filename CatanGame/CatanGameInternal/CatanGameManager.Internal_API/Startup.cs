@@ -2,7 +2,7 @@ using CatanGameManager.CommonObjects.Config;
 using CatanGameManager.Core;
 using CatanGameManager.Interfaces;
 using CatanGameManager.Interfaces.PersistanceInterfaces;
-using CatanGamePersistence.MongoDB;
+using CatanGameManger.Persistence.MongoDB;
 using CommonLib.Config;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

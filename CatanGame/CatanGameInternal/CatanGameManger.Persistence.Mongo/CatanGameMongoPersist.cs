@@ -2,6 +2,7 @@
 using CatanGameManager.CommonObjects.Enums;
 using CatanGameManager.CommonObjects.User;
 using CatanGameManager.Interfaces.PersistanceInterfaces;
+using CatanGamePersistence.MongoDB;
 using CommonLib.Config;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -14,7 +15,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CatanGamePersistence.MongoDB
+namespace CatanGameManger.Persistence.MongoDB
 {
     public class CatanGameMongoPersist(ILogger<CatanGameMongoPersist> logger, IOptions<MongoConfig> options) :
         CatanEntityMongoPersist<CatanGame>(logger, options, options.Value.MongoGameDocumentName), ICatanGamePersist

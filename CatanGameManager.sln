@@ -21,7 +21,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CommonLib", "CommonLib", "{
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonLib", "CommonLib\CommonLib\CommonLib.csproj", "{97CCD6D3-42BA-4DEC-B7F1-E7352D7BA5E7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserManager.MongoPersist", "Users\UserManager.MongoPersist\UserManager.MongoPersist.csproj", "{05ED174F-3592-47BB-8DF2-C6DFA7DED853}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserManager.Persistence.MongoDB", "Users\UserManager.MongoPersist\UserManager.Persistence.MongoDB.csproj", "{05ED174F-3592-47BB-8DF2-C6DFA7DED853}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CatanGame.Tests", "Tests\CatanGame.Tests\CatanGame.Tests.csproj", "{9E200D7A-C262-4193-94BA-8121FFA8D2EE}"
 EndProject
@@ -37,7 +37,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CatanGameManager.Interfaces
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CatanGameManager.Core", "CatanGame\CatanGameInternal\CatanGameManager.Core\CatanGameManager.Core.csproj", "{FFD83A72-B8E5-477F-B11F-3754A5DB0A4F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CatanGameManger.Persistence.Mongo", "CatanGame\CatanGameInternal\CatanGameManger.Persistence.Mongo\CatanGameManger.Persistence.Mongo.csproj", "{9F6B2AD7-DD6B-4B3C-93C3-009E6BCB6AB3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CatanGameManger.Persistence.MongoDB", "CatanGame\CatanGameInternal\CatanGameManger.Persistence.Mongo\CatanGameManger.Persistence.MongoDB.csproj", "{9F6B2AD7-DD6B-4B3C-93C3-009E6BCB6AB3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CatanGameManager.External_API", "CatanGame\CatanGameExternal\CatanGameManager.External_API\CatanGameManager.External_API.csproj", "{C8F6EA5A-A620-4CD7-8791-05B96141290E}"
 EndProject

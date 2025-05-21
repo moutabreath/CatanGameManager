@@ -15,7 +15,7 @@
     <ProjectReference Include="..\..\CommonLib\CommonLib\CommonLib.csproj" />
     <ProjectReference Include="..\User.Interfaces\UserManager.Interfaces.csproj" />
     <ProjectReference Include="..\UserManager.Core\UserManager.Core.csproj" />
-    <ProjectReference Include="..\UserManager.MongoPersist\UserManager.MongoPersist.csproj" />
+    <ProjectReference Include="..\UserManager.MongoPersist\UserManager.Persistence.MongoDB.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Logs\" />

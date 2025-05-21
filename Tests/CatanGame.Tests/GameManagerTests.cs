@@ -18,6 +18,7 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Bson.Serialization;
+using CatanGameManger.Persistence.MongoDB;
 
 namespace CatanGameManager.Tests
 {
