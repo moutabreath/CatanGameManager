@@ -29,13 +29,13 @@ namespace CatanGamePersistence.MongoDB
             }
         }
 
-        public async Task UpdateUser(UserProfile playerProfile)
+        public async Task<bool> UpdateUser(UserProfile playerProfile)
         {
             if (playerProfile.Id == Guid.Empty) playerProfile.Id = Guid.NewGuid();
 
             _logger?.LogDebug($"UpdateUser: {playerProfile.Id}"); 
 
-            await UpdateEntity(playerProfile,
+            return await UpdateEntity(playerProfile,
                 MongoCollection, 
                 Builders<UserProfile>.Filter.Where(userProfile => userProfile.Id == playerProfile.Id));
         }

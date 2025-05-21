@@ -29,15 +29,17 @@ namespace CatanGamePersistence.MongoDB
 
         protected abstract void InitializeClassMap();
 
-        protected async Task UpdateEntity(T entity, IMongoCollection<T> collection, FilterDefinition<T> filter)
+        protected async Task<bool> UpdateEntity(T entity, IMongoCollection<T> collection, FilterDefinition<T> filter)
         {
             try
             {
-                await collection.ReplaceOneAsync(filter, entity, new ReplaceOptions { IsUpsert = true });
+                ReplaceOneResult replaceOneResult = await collection.ReplaceOneAsync(filter, entity, new ReplaceOptions { IsUpsert = true });
+                return replaceOneResult.IsAcknowledged;
             }
             catch(Exception ex)
             {
                 _logger.LogError($"UpdateEntity Error when updating entity {entity.Id}, filter {filter}", ex);
+                return false;
             }
         }
     }

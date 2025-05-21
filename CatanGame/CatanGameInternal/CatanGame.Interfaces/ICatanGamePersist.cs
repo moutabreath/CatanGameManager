@@ -9,7 +9,7 @@ namespace CatanGameManager.Interfaces.PersistanceInterfaces
 {
     public interface ICatanGamePersist
     {
-        Task UpdateGame(CatanGame catanGame);
+        Task<bool> UpdateGame(CatanGame catanGame);
         Task<CatanGame> GetGame(Guid gameId);
         Task RemoveGame(CatanGame catanGame);
         Task<IEnumerable<CatanGame>> GetUserActiveGames(string userName);

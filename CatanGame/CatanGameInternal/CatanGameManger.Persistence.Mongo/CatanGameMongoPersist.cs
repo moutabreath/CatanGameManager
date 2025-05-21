@@ -63,7 +63,7 @@ namespace CatanGamePersistence.MongoDB
                                                                  .ToList();
         }
 
-        public async Task UpdateGame(CatanGame catanGame)
+        public async Task<bool> UpdateGame(CatanGame catanGame)
         {
             if (catanGame.Id == Guid.Empty)
             {
@@ -74,7 +74,7 @@ namespace CatanGamePersistence.MongoDB
             }
             _logger?.LogDebug($"UpdateGame game: {catanGame.Id}");
             FilterDefinition<CatanGame> filter = Builders<CatanGame>.Filter.Where(game => game.Id == catanGame.Id);
-            await UpdateEntity(catanGame, MongoCollection, filter);
+            return await UpdateEntity(catanGame, MongoCollection, filter);
         }
 
         public async Task RemoveGame(CatanGame catanGame)
@@ -168,6 +168,6 @@ namespace CatanGamePersistence.MongoDB
                 _logger.LogError($"GetGameTotalActiveKnights: couldn't find game at this id:{catanGameId}");
             }
             return catanGame.ActivePlayers.Sum(activePlayer => activePlayer.NumOfActiveKnights);
-        }
+        }        
     }
 }
