@@ -32,10 +32,10 @@ namespace CatanGameManager.Core
             return await catanUserPersist.GetUser(userName, password);
         }
         
-        public async Task UnRegisterUser(Guid userId)
+        public async Task<bool> UnRegisterUser(Guid userId)
         {
             logger?.LogDebug($"UnRegisterUser: {userId}");
-             await catanUserPersist.UnRegisterUser(userId);
+             return await catanUserPersist.UnRegisterUser(userId);
         }
 
         public async Task<List<UserProfile>> SearchUser(string userName)

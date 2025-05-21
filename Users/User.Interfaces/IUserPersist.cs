@@ -9,7 +9,7 @@ namespace CatanGameManager.Interfaces.PersistanceInterfaces
     {
         Task<bool> UpdateUser(UserProfile playerProfile);
         Task<UserProfile> GetUser(string userName, string password);
-        Task UnRegisterUser(Guid userId);
+        Task<bool> UnRegisterUser(Guid userId);
 
         Task AddPlayerPoints(string userId, int points);
 

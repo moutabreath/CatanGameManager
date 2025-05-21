@@ -12,48 +12,34 @@ using Confluent.Kafka;
 
 namespace CatanGameManager.Core
 {
-    public class CatanGameBusinessLogic : ICatanGameBusinessLogic
+    public class CatanGameBusinessLogic(ILogger<CatanGameBusinessLogic> logger, ICatanGamePersist catanGamePersist) : ICatanGameBusinessLogic
     {
-        private ILogger<CatanGameBusinessLogic> _logger;
-        private ICatanGamePersist _catanGamePersist;
-
-        public CatanGameBusinessLogic(ILogger<CatanGameBusinessLogic> logger, ICatanGamePersist catanGamePersist)
-        {
-            _logger = logger;
-            _catanGamePersist = catanGamePersist;
-        }
 
         #region Game Update
 
         public async Task UpdateGame(CatanGame catanGame)
         {
-            _logger?.LogDebug($"UpdateGame for game: {catanGame.Id}");
-            if (catanGame.ActivePlayers == null)
-            {
-                catanGame.ActivePlayers = [];
-            }
-            if (catanGame.RecentDiceRolls == null)
-            {
-                catanGame.RecentDiceRolls = [];
-            }
-            await _catanGamePersist.UpdateGame(catanGame);
+            logger?.LogDebug($"UpdateGame for game: {catanGame.Id}");
+            catanGame.ActivePlayers ??= [];
+            catanGame.RecentDiceRolls ??= [];
+            await catanGamePersist.UpdateGame(catanGame);
         }
 
         public async Task<CatanGame> GetGame(Guid gameId)
         {
-            _logger?.LogDebug($"GetGame for catanGame: {gameId}");
-            return await _catanGamePersist.GetGame(gameId);
+            logger?.LogDebug($"GetGame for catanGame: {gameId}");
+            return await catanGamePersist.GetGame(gameId);
         }
 
         public async Task<IEnumerable<CatanGame>> GetUserActiveGames(string userName)
         {
-            _logger?.LogDebug($"GetUserActiveGames for game admin: {userName}");
-            return await _catanGamePersist.GetUserActiveGames(userName);
+            logger?.LogDebug($"GetUserActiveGames for game admin: {userName}");
+            return await catanGamePersist.GetUserActiveGames(userName);
         }
 
         public async Task AddPlayerToGame(CatanGame catanGame, string userName)
         {
-            _logger?.LogDebug($"AddPlayerToGame for catanGame: {catanGame.Id}, player: {userName}");
+            logger?.LogDebug($"AddPlayerToGame for catanGame: {catanGame.Id}, player: {userName}");
 
             ActivePlayer activePlayer = new()
             {
@@ -68,18 +54,18 @@ namespace CatanGameManager.Core
             };
 
             catanGame.ActivePlayers.Add(activePlayer);
-            await _catanGamePersist.UpdateGame(catanGame);
+            await catanGamePersist.UpdateGame(catanGame);
         }
         public async Task UpdatePlayerInGame(CatanGame catanGame, ActivePlayer playerToUpdate)
         {
-            _logger?.LogDebug($"UpdatePlayerInGame for catanGame: {catanGame.Id}, player to update: {playerToUpdate.Id}");
-            await _catanGamePersist.UpdatePlayerInGame(catanGame, playerToUpdate);
+            logger?.LogDebug($"UpdatePlayerInGame for catanGame: {catanGame.Id}, player to update: {playerToUpdate.Id}");
+            await catanGamePersist.UpdatePlayerInGame(catanGame, playerToUpdate);
         }
 
         public async Task RemoveGame(CatanGame catanGame)
         {
-            _logger?.LogDebug($"RemoveGame for catanGame: {catanGame.Id}");
-            await _catanGamePersist.RemoveGame(catanGame);
+            logger?.LogDebug($"RemoveGame for catanGame: {catanGame.Id}");
+            await catanGamePersist.RemoveGame(catanGame);
         }
 
         #endregion Game Update
@@ -135,7 +121,7 @@ namespace CatanGameManager.Core
                 }
                 catch (ProduceException<string, int> ex)
                 {
-                    _logger?.LogError(ex, "Error producing");
+                    logger?.LogError(ex, "Error producing");
                 }
             }
             return numberOfVps;
@@ -143,7 +129,7 @@ namespace CatanGameManager.Core
 
         public async Task AddPlayerVictoryPoint(CatanGame catanGame, ActivePlayer activePlayer, VPType updateType)
         {
-            _logger?.LogDebug($"AddPlayerVictoryPoint for catanGame: {catanGame.Id}, player: {activePlayer.Id}, updateType: {updateType}");
+            logger?.LogDebug($"AddPlayerVictoryPoint for catanGame: {catanGame.Id}, player: {activePlayer.Id}, updateType: {updateType}");
             if (updateType.TypeToUpdate == VPType.UpdateType.Interchangeable)
             {
                 IEnumerable<ActivePlayer> activePlayers = catanGame?.ActivePlayers.Where(player => player.InterChanageableVPs.Contains(updateType.TypeOfInterchangeable));
@@ -156,7 +142,7 @@ namespace CatanGameManager.Core
 
                 activePlayer.InterChanageableVPs.Add(updateType.TypeOfInterchangeable);
                 activePlayer.NumOfVictoryPoints = await GetPlayerTotalVps(activePlayer);
-                await _catanGamePersist.UpdateGame(catanGame);
+                await catanGamePersist.UpdateGame(catanGame);
                 return;
             }
             await AddNonInterchaneableVPs(catanGame, activePlayer, updateType);
@@ -164,7 +150,7 @@ namespace CatanGameManager.Core
 
         private async Task AddNonInterchaneableVPs(CatanGame catanGame, ActivePlayer activePlayer, VPType updateType)
         {
-            _logger?.LogDebug($"AddVPsToSelectedPlayer game: {catanGame.Id}, player {activePlayer.Id}, updateType: {updateType.TypeToUpdate}");
+            logger?.LogDebug($"AddVPsToSelectedPlayer game: {catanGame.Id}, player {activePlayer.Id}, updateType: {updateType.TypeToUpdate}");
             switch (updateType.TypeToUpdate)
             {
                 //TODO: Update remaining settlements / cities
@@ -184,7 +170,7 @@ namespace CatanGameManager.Core
                     break;
             }
             activePlayer.NumOfVictoryPoints = await GetPlayerTotalVps(activePlayer);
-            await _catanGamePersist.UpdateGame(catanGame);
+            await catanGamePersist.UpdateGame(catanGame);
         }
 
 
@@ -195,32 +181,32 @@ namespace CatanGameManager.Core
 
         public async Task<int> GetGameTotalActiveKnights(Guid catanGameId)
         {
-            _logger?.LogDebug($"GetTotalActiveKnights for catanGame: {catanGameId}");
-            return await _catanGamePersist.GetGameTotalActiveKnights(catanGameId);
+            logger?.LogDebug($"GetTotalActiveKnights for catanGame: {catanGameId}");
+            return await catanGamePersist.GetGameTotalActiveKnights(catanGameId);
         }
 
         public async Task AddPlayerKnight(Guid catanGameId, Guid activePlayerId, KnightRank knightRank)
         {
-            _logger?.LogDebug($"AddPlayerKnight for catanGame: {catanGameId}, player: {activePlayerId}, knightRank: {knightRank}");
-            await _catanGamePersist.AddPlayerKnight(catanGameId, activePlayerId, knightRank);
+            logger?.LogDebug($"AddPlayerKnight for catanGame: {catanGameId}, player: {activePlayerId}, knightRank: {knightRank}");
+            await catanGamePersist.AddPlayerKnight(catanGameId, activePlayerId, knightRank);
         }
 
         public async Task AdvanceBarbarians(Guid catanGameId)
         {
-            _logger?.LogDebug($"AdvanceBarbarians for catanGame: {catanGameId}");
-            await _catanGamePersist.AdvanceBarbarians(catanGameId);
+            logger?.LogDebug($"AdvanceBarbarians for catanGame: {catanGameId}");
+            await catanGamePersist.AdvanceBarbarians(catanGameId);
         }
 
         public async Task ActivateAllKnightsForPlayer(Guid catanGameId, Guid activePlayerId)
         {
-            _logger?.LogDebug($"ActivateAllKnightsForPlayer for catanGame: {catanGameId}, player: {activePlayerId}");
-            await _catanGamePersist.ActivateAllKnightsForPlayer(catanGameId, activePlayerId);
+            logger?.LogDebug($"ActivateAllKnightsForPlayer for catanGame: {catanGameId}, player: {activePlayerId}");
+            await catanGamePersist.ActivateAllKnightsForPlayer(catanGameId, activePlayerId);
         }
 
         public async Task DeactivateAllKnights(Guid catanGameId)
         {
-            _logger?.LogDebug($"DeactivateAllKnights for catanGame: {catanGameId}");
-            await _catanGamePersist.DeactivateAllKnights(catanGameId);
+            logger?.LogDebug($"DeactivateAllKnights for catanGame: {catanGameId}");
+            await catanGamePersist.DeactivateAllKnights(catanGameId);
         }
 
 

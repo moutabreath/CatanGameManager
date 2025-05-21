@@ -49,10 +49,15 @@ namespace CatanGamePersistence.MongoDB
                 .FirstOrDefaultAsync();
         }
 
-        public async Task UnRegisterUser(Guid userId)
+        public async Task<bool> UnRegisterUser(Guid userId)
         {
             _logger?.LogDebug($"UnRegisterUser: {userId}");
-            await MongoCollection.DeleteOneAsync(playerProfile => playerProfile.Id == userId);
+            DeleteResult deleteResult = await MongoCollection.DeleteOneAsync(playerProfile => playerProfile.Id == userId);
+            if (deleteResult != null)
+            {
+                return deleteResult.IsAcknowledged;
+            }
+            return false;
         }
 
         public async Task AddPlayerPoints(string userId, int points)
