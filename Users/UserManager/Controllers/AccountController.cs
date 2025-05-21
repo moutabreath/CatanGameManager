@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using UserManager.API.Requests;
 
-namespace CatanGameManager.API.Controllers
+namespace CatanGameManager.Internal_API.Controllers
 {
     [Produces("application/json")]
     [Route("[controller]/[action]")]

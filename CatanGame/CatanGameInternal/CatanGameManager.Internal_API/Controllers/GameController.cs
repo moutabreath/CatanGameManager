@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace CatanGameManager.API.Controllers
+namespace CatanGameManager.Internal_API.Controllers
 {
     /// <summary>
     /// The web interface includes most common game update options.

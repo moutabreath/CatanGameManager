@@ -15,7 +15,7 @@ using System;
 using System.IO;
 using System.Linq;
 
-namespace CatanGameManager.API
+namespace CatanGameManager.Internal_API
 {
     public class Startup(IConfiguration configuration)
     {
