@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using CatanGameManager.CommonObjects;
+﻿using CatanGameManager.CommonObjects;
 using CatanGameManager.CommonObjects.Enums;
 using CatanGameManager.CommonObjects.User;
 using CatanGameManager.Interfaces.PersistanceInterfaces;
@@ -13,11 +9,15 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace CatanGamePersistence.MongoDB
 {
-    public class CatanGameMongoPersist(ILogger<CatanGameMongoPersist> logger, IOptions<MongoConfig> options) : 
-		CatanEntityMongoPersist<CatanGame>(logger, options, options.Value.MongoGameDocumentName), ICatanGamePersist
+    public class CatanGameMongoPersist(ILogger<CatanGameMongoPersist> logger, IOptions<MongoConfig> options) :
+        CatanEntityMongoPersist<CatanGame>(logger, options, options.Value.MongoGameDocumentName), ICatanGamePersist
     {
         protected override void InitializeClassMap()
         {
@@ -86,7 +86,7 @@ namespace CatanGamePersistence.MongoDB
         public async Task<bool> RemoveGame(CatanGame catanGame)
         {
             _logger?.LogDebug($"RemoveGame: {catanGame.Id}");
-            DeleteResult result =await MongoCollection.DeleteOneAsync(game => game.Id == catanGame.Id);
+            DeleteResult result = await MongoCollection.DeleteOneAsync(game => game.Id == catanGame.Id);
             if (result != null)
             {
                 return result.IsAcknowledged;
@@ -98,41 +98,55 @@ namespace CatanGamePersistence.MongoDB
         {
             _logger?.LogDebug($"DeactivateAllKnights game: {catanGameId}");
 
-            FilterDefinition<CatanGame> filter = Builders<CatanGame>.Filter
-                                                                    .Where(catanGame => catanGame.Id == catanGameId
-                                                                    && catanGame.ActivePlayers.Any(activePlayer => activePlayer != null));
-
-            UpdateDefinition<CatanGame> update =
-                                                 Builders<CatanGame>.Update
-                                                     // The "-1" index matches ALL the items matching the filter
-                                                     .Set(catanGame => catanGame.ActivePlayers[-1].NumOfActiveKnights, 0);
-
-            UpdateResult result = await MongoCollection.UpdateOneAsync(filter, update);
-            if (result != null)
+            var filter = Builders<CatanGame>.Filter.And(
+                Builders<CatanGame>.Filter.Eq(game => game.Id, catanGameId)
+            );
+        
+            var update = Builders<CatanGame>.Update.Inc("ActivePlayers.$[player].NumOfActiveKnights", 0);
+            var arrayFilters = new List<ArrayFilterDefinition>
             {
-                return result.IsAcknowledged;
-            }
-            return false;
+                new BsonDocumentArrayFilterDefinition<BsonDocument>(
+                    new BsonDocument
+                    {
+                        { "player.NumOfActiveKnights",new BsonDocument("$gt", 0) }
+                    }
+                )
+            };
+            var updateOptions = new UpdateOptions { ArrayFilters = arrayFilters };
+            var result = await MongoCollection.UpdateOneAsync(filter, update, updateOptions);
+            return result != null && result.IsAcknowledged;
         }
 
         public async Task<bool> ActivateAllKnightsForPlayer(Guid catanGameId, Guid playerId)
         {
             _logger?.LogDebug($"ActivateAllKnightsForPlayer, game: {catanGameId}, player: {playerId}");
 
-            ActivePlayer activePlayerToUpdate = MongoCollection.AsQueryable().Where(game => game.Id == catanGameId).FirstOrDefault().
-               ActivePlayers.Where(activePlayer => activePlayer.Id == playerId).FirstOrDefault();
+            // 1. Retrieve the current NumOfTotalKnights for the player
+            var game = await (await MongoCollection.FindAsync(g => g.Id == catanGameId)).FirstOrDefaultAsync();
+            var player = game?.ActivePlayers.FirstOrDefault(activePlayer => activePlayer.Id == playerId);
+            if (player == null)
+                return false;
 
-            FilterDefinition<CatanGame> filter = Builders<CatanGame>.Filter
-                        .Where(catanGame => catanGame.Id == catanGameId
-                        && catanGame.ActivePlayers.Any(activePlayer => activePlayer != null));
+            int totalKnights = player.NumOfTotalKnights;
 
-            var update = Builders<CatanGame>.Update.Set(x => x.ActivePlayers[-1].NumOfActiveKnights, activePlayerToUpdate.NumOfTotalKnights);
-            UpdateResult result = await MongoCollection.UpdateOneAsync(filter, update);
-            if (result != null)
+            // 2. Update NumOfActiveKnights for that player
+            var filter = Builders<CatanGame>.Filter.And(
+                Builders<CatanGame>.Filter.Eq(g => g.Id, catanGameId),
+                Builders<CatanGame>.Filter.ElemMatch(g => g.ActivePlayers, activePlayer => activePlayer.Id == playerId)
+            );
+
+            var update = Builders<CatanGame>.Update.Set("ActivePlayers.$[player].NumOfActiveKnights", totalKnights);
+
+            var arrayFilters = new List<ArrayFilterDefinition>
             {
-                return result.IsAcknowledged;
-            }
-            return false;
+                new BsonDocumentArrayFilterDefinition<BsonDocument>(
+                    new BsonDocument("player._id", new BsonBinaryData(playerId, GuidRepresentation.Standard))
+                )
+            };
+            var updateOptions = new UpdateOptions { ArrayFilters = arrayFilters };
+
+            var result = await MongoCollection.UpdateOneAsync(filter, update, updateOptions);
+            return result != null && result.IsAcknowledged;
         }
 
         public async Task<bool> AdvanceBarbarians(Guid catanGameId)
@@ -152,30 +166,36 @@ namespace CatanGamePersistence.MongoDB
             return false;
         }
 
-        public async Task AddPlayerKnight(Guid catanGameId, Guid activePlayerId, KnightRank knightRank)
+        public async Task<bool> AddPlayerKnight(Guid catanGameId, Guid activePlayerId, KnightRank knightRank)
         {
             _logger?.LogDebug($"AddPlayerKnight: {catanGameId}, activePlayerId: {activePlayerId}, knightRank: {knightRank}");
-            int knightsNumberToAdd = 0;
-            switch (knightRank)
+            int knightsNumberToAdd = knightRank switch
             {
-                case KnightRank.Basic:
-                    knightsNumberToAdd = 1;
-                    break;
-                case KnightRank.Strong:
-                    knightsNumberToAdd = 2;
-                    break;
-                case KnightRank.Mighty:
-                    knightsNumberToAdd = 3;
-                    break;
-            }
+                KnightRank.Basic => 1,
+                KnightRank.Strong => 2,
+                KnightRank.Mighty => 3,
+                _ => 0
+            };
 
-            FilterDefinition<CatanGame> filter = Builders<CatanGame>.Filter.Where(game => game.Id == catanGameId
-                                                                  && game.ActivePlayers.Any(activePlayer => activePlayer.Id == activePlayerId));
-
-            UpdateDefinition<CatanGame> update = Builders<CatanGame>.Update.Inc(activePlayer => activePlayer.ActivePlayers[-1].NumOfTotalKnights, knightsNumberToAdd);
-
-            await MongoCollection.UpdateOneAsync(filter, update);
+            var filter = Builders<CatanGame>.Filter.And(
+                Builders<CatanGame>.Filter.Eq(game => game.Id, catanGameId),
+                Builders<CatanGame>.Filter.ElemMatch(game => game.ActivePlayers, activePlayer => activePlayer.Id == activePlayerId)
+            );
+            var update = Builders<CatanGame>.Update.Inc("ActivePlayers.$[player].NumOfTotalKnights", knightsNumberToAdd);
+            var arrayFilters = new List<ArrayFilterDefinition>
+            {
+                new BsonDocumentArrayFilterDefinition<BsonDocument>(
+                    new BsonDocument
+                    {
+                        { "player._id", new BsonBinaryData(activePlayerId, GuidRepresentation.Standard) }
+                    }
+                )
+            };
+            var updateOptions = new UpdateOptions { ArrayFilters = arrayFilters };
+            UpdateResult result = await MongoCollection.UpdateOneAsync(filter, update, updateOptions);
+            return result != null && result.IsAcknowledged;
         }
+
         public async Task<int> GetTotalActiveKnights(Guid catanGameId)
         {
             _logger?.LogDebug($"GetTotalActiveKnights: {catanGameId}");
@@ -193,6 +213,6 @@ namespace CatanGamePersistence.MongoDB
                 _logger.LogError($"GetGameTotalActiveKnights: couldn't find game at this id:{catanGameId}");
             }
             return catanGame.ActivePlayers.Sum(activePlayer => activePlayer.NumOfActiveKnights);
-        }        
+        }
     }
 }

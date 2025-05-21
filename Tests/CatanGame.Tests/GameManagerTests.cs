@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using CatanGameManager.CommonObjects.Config;
 using CatanGameManager.CommonObjects.Enums;
 using CatanGameManager.CommonObjects.User;
 using CatanGameManager.CommonObjects;
@@ -12,12 +11,23 @@ using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using CatanGamePersistence.MongoDB;
 using CommonLib.Config;
+using Mongo2Go;
+using Microsoft.Extensions.DependencyInjection;
+using CatanGameManager.Interfaces.PersistanceInterfaces;
+using MongoDB.Bson;
+using MongoDB.Driver;
+using MongoDB.Bson.Serialization.Serializers;
+using MongoDB.Bson.Serialization;
 
 namespace CatanGameManager.Tests
 {
     [TestClass]
     public class GameManagerTests
     {
+        private static ServiceProvider _serviceProvider;
+
+        private static MongoDbRunner _mongoRunner;
+
         private ICatanUserBusinessLogic _catanPlayerBusinessLogic;
         private ICatanGameBusinessLogic _catanGameBusinessLogic;
 
@@ -27,68 +37,39 @@ namespace CatanGameManager.Tests
         private const string Password = "pass";
 
 
-        [TestInitialize]
-        public async Task Init()
+        [ClassInitialize]
+        public static void ConfigureIoC(TestContext testContext)
         {
-            MongoConfig config = new MongoConfig
+            var services = new ServiceCollection();
+
+            services.AddLogging();
+
+            InitMongo(services);
+
+            services.AddScoped<ICatanUserBusinessLogic, CatanUserBusinessLogic>();
+            services.AddScoped<ICatanGameBusinessLogic, CatanGameBusinessLogic>();
+            services.AddScoped<ICatanUserPersist, CatanUserMongoPersist>();
+            services.AddScoped<ICatanGamePersist, CatanGameMongoPersist>();
+
+            _serviceProvider = services.BuildServiceProvider();
+
+        }
+
+        private static void InitMongo(ServiceCollection services)
+        {
+            _mongoRunner = MongoDbRunner.Start();
+            BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
+            var config = new MongoConfig
             {
-                    MongoConnectionString = "mongodb://myAdmin:simplePassword@localhost/catanHelperTest?authSource=admin",
-                    MongoDatabaseName = "CatanGameTest"
-                
-            };            
+                MongoConnectionString = _mongoRunner.ConnectionString,
+                MongoDatabaseName = "CatanGameTest",
+                MongoGameDocumentName = "CatanGame",
+                MongoPlayerDocumentName = "PlayerProfile"
+            };
+
+
             IOptions<MongoConfig> someOptions = Options.Create(config);
-            _catanPlayerBusinessLogic = new CatanUserBusinessLogic(null, new CatanUserMongoPersist(null, someOptions));
-            _catanGameBusinessLogic = new CatanGameBusinessLogic(null, new CatanGameMongoPersist(null, someOptions));
-
-            await Cleanup();
-            await AddNewPlayer();
-            await UpdateGameAndAddPlayer();
-        }
-
-        private async Task<CatanGame> GetGame()
-        {
-            UserProfile playerProfile = await _catanPlayerBusinessLogic.GetUser(PlayerEmail1, Password);
-            IEnumerable<CatanGame> playerGames = await _catanGameBusinessLogic.GetUserActiveGames(playerProfile.UserName);
-            return playerGames.FirstOrDefault();
-        }
-
-        private async Task AddNewPlayer()
-        {
-            UserProfile playerProfile = new UserProfile
-            {
-                Email = PlayerEmail1,
-                FirstName = "Some",
-                LastName = "Some",
-                Name = "someSomeone",
-                Password = Password
-            };
-            await _catanPlayerBusinessLogic.RegisterPlayer(playerProfile);
-        }       
-
-        private async Task UpdateGameAndAddPlayer()
-        {
-            List<ActivePlayer> players = new List<ActivePlayer>();
-            CatanGame catanGame = new CatanGame
-            {
-                ActivePlayers = players,
-                BanditsDistance = 7,
-                BanditsStrength = 4
-
-            };
-            await _catanGameBusinessLogic.UpdateGame(catanGame);
-            UserProfile playerProfile = await _catanPlayerBusinessLogic.GetUser(PlayerEmail1, Password);
-
-            UserProfile playerProfile2 = new UserProfile
-            {
-                Email = PlayerEmail2,
-                FirstName = "Some",
-                LastName = "Some",
-                Name = "someSomeone2",
-                Password = Password
-            };
-            await _catanPlayerBusinessLogic.UpdatePlayer(playerProfile2);
-            await _catanGameBusinessLogic.AddPlayerToGame(catanGame,playerProfile2.Email);
-            await _catanGameBusinessLogic.AddPlayerToGame(catanGame, playerProfile.Email);
+            services.AddSingleton(Options.Create(someOptions.Value));
         }
 
         [TestCleanup]
@@ -96,7 +77,8 @@ namespace CatanGameManager.Tests
         {
             UserProfile playerProfile = await _catanPlayerBusinessLogic.GetUser(PlayerEmail1, Password);
             if (playerProfile == null) return;
-            IEnumerable<CatanGame> playerGames = await _catanGameBusinessLogic.GetUserActiveGames(playerProfile.UserName);
+
+            IEnumerable<CatanGame> playerGames = await _catanGameBusinessLogic.GetUserActiveGames(playerProfile.Email);
             foreach (CatanGame playerGame in playerGames)
             {
                 await _catanGameBusinessLogic.RemoveGame(playerGame);
@@ -105,24 +87,80 @@ namespace CatanGameManager.Tests
             await _catanPlayerBusinessLogic.UnRegisterUser(playerProfile.Id);
         }
 
+        [TestInitialize]
+        public async Task PopulateMockData()
+        {
+            _catanPlayerBusinessLogic = _serviceProvider.GetRequiredService<ICatanUserBusinessLogic>();
+            _catanGameBusinessLogic = _serviceProvider.GetRequiredService<ICatanGameBusinessLogic>();
+            await AddNewPlayer();
+            await UpdateGameAndAddPlayer();
+        }
+
+        private async Task<CatanGame> GetGame()
+        {
+            UserProfile playerProfile = await _catanPlayerBusinessLogic.GetUser(PlayerEmail1, Password);
+            IEnumerable<CatanGame> playerGames = await _catanGameBusinessLogic.GetUserActiveGames(playerProfile.Email);
+            return playerGames.FirstOrDefault();
+        }
+
+        private async Task AddNewPlayer()
+        {
+            UserProfile playerProfile = new()
+            {
+                Email = PlayerEmail1,
+                FirstName = "Some",
+                LastName = "Some",
+                Name = "someSomeone",
+                Password = Password
+            };
+            bool result = await _catanPlayerBusinessLogic.RegisterPlayer(playerProfile);
+        }
+
+        private async Task UpdateGameAndAddPlayer()
+        {
+            List<ActivePlayer> players = [];
+            CatanGame catanGame = new()
+            {
+                ActivePlayers = players,
+                BanditsDistance = 7,
+                BanditsStrength = 4,
+                RecentDiceRolls = []
+            };
+            await _catanGameBusinessLogic.UpdateGame(catanGame);
+            UserProfile playerProfile = await _catanPlayerBusinessLogic.GetUser(PlayerEmail1, Password);
+
+            UserProfile playerProfile2 = new()
+            {
+                Email = PlayerEmail2,
+                FirstName = "Some",
+                LastName = "Some",
+                Name = "someSomeone2",
+                Password = Password
+            };
+            bool playerUpdated = await _catanPlayerBusinessLogic.UpdatePlayer(playerProfile2);
+            bool playerAddedToGame = await _catanGameBusinessLogic.AddPlayerToGame(catanGame, playerProfile2.Email);
+            bool player2AddedToGame = await _catanGameBusinessLogic.AddPlayerToGame(catanGame, playerProfile.Email);
+        }
+
+
         [TestMethod]
         public async Task TestGetPlayer()
         {
             UserProfile playerProfile = await _catanPlayerBusinessLogic.GetUser(PlayerEmail1, Password);
             Assert.IsNotNull(playerProfile);
-            Assert.AreEqual(playerProfile.Email, PlayerEmail1);
+            Assert.AreEqual(PlayerEmail1, playerProfile.Email);
         }
 
         [TestMethod]
         public async Task TestGetPlayerActiveGames()
         {
             UserProfile playerProfile = await _catanPlayerBusinessLogic.GetUser(PlayerEmail1, Password);
-            IEnumerable<CatanGame> playerGames = await _catanGameBusinessLogic.GetUserActiveGames(playerProfile.UserName);
+            IEnumerable<CatanGame> playerGames = await _catanGameBusinessLogic.GetUserActiveGames(playerProfile.Email);
             CatanGame theCatanGame = playerGames.FirstOrDefault();
             Assert.IsNotNull(theCatanGame);
-            Assert.IsTrue(theCatanGame.ActivePlayers.Select(activePlayer => activePlayer.UserName).Contains(playerProfile.UserName));
-        }        
-      
+            Assert.IsTrue(theCatanGame.ActivePlayers.Select(activePlayer => activePlayer.UserName).Contains(playerProfile.Email));
+        }
+
         [TestMethod]
         public async Task TestAddPlayerKnight()
         {
@@ -163,11 +201,11 @@ namespace CatanGameManager.Tests
         public async Task TestDeactivateAllKnights()
         {
             UserProfile playerProfile = await _catanPlayerBusinessLogic.GetUser(PlayerEmail1, Password);
-            IEnumerable<CatanGame> playerGames = await _catanGameBusinessLogic.GetUserActiveGames(playerProfile.UserName);
+            IEnumerable<CatanGame> playerGames = await _catanGameBusinessLogic.GetUserActiveGames(playerProfile.Email);
             CatanGame theCatanGame = playerGames.FirstOrDefault();
             await _catanGameBusinessLogic.DeactivateAllKnights(theCatanGame.Id);
 
-            playerGames = await _catanGameBusinessLogic.GetUserActiveGames(playerProfile.UserName);
+            playerGames = await _catanGameBusinessLogic.GetUserActiveGames(playerProfile.Email);
             theCatanGame = playerGames.FirstOrDefault();
 
             foreach (ActivePlayer activePlayer in theCatanGame.ActivePlayers)
@@ -211,7 +249,7 @@ namespace CatanGameManager.Tests
             Assert.AreEqual(secondPlayerExpectedVPs, theGame.ActivePlayers.ElementAt(1).NumOfVictoryPoints);
 
             vpType = new VPType(VPType.UpdateType.Settlment);
-            firstPlayerExpectedVPs ++;
+            firstPlayerExpectedVPs++;
             await _catanGameBusinessLogic.AddPlayerVictoryPoint(theGame, theGame.ActivePlayers.FirstOrDefault(), vpType);
             theGame = await GetGame();
             Assert.AreEqual(firstPlayerExpectedVPs, theGame.ActivePlayers.FirstOrDefault().NumOfVictoryPoints);
